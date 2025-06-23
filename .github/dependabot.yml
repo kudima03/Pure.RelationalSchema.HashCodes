@@ -2,8 +2,8 @@ version: 2
 updates:
 - package-ecosystem: nuget
   directories:
-    - "src/"
-    - "src/Tests/"
+    - "src/Pure.RelationalSchema.HashCodes"
+    - "src/Tests/Pure.RelationalSchema.HashCodes.Tests"
   schedule:
     interval: daily
   reviewers:
