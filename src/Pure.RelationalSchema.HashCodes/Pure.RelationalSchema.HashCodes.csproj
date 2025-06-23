@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>Pure.RelationalSchema.HashCodes</PackageId>
+    <RootNamespace>Pure.RelationalSchema.HashCodes</RootNamespace>
+    <AssemblyName>Pure.RelationalSchema.HashCodes</AssemblyName>
+    <Authors>Dmitry Kurochkin</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/kudima03/Pure.RelationalSchema.HashCodes</PackageProjectUrl>
+  </PropertyGroup>
+
 </Project>
