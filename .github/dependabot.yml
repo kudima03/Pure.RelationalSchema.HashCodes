@@ -1,0 +1,16 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directories:
+    - "src/"
+    - "src/Tests/"
+  schedule:
+    interval: daily
+  reviewers:
+    - "kudima03"
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: weekly
+  reviewers:
+    - "kudima03"
