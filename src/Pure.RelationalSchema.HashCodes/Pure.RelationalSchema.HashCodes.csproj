@@ -15,4 +15,9 @@
     <PackageProjectUrl>https://github.com/kudima03/Pure.RelationalSchema.HashCodes</PackageProjectUrl>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Pure.HashCodes" Version="0.4.0" />
+    <PackageReference Include="Pure.RelationalSchema.Abstractions" Version="0.1.0" />
+  </ItemGroup>
+
 </Project>
