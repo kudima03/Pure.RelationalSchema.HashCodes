@@ -17,23 +17,23 @@ public sealed record ColumnTypeHashTests
 
         IDeterminedHash nameHash = new DeterminedHash(columnType.Name);
 
-        IEnumerable expectedHash = SHA256.HashData(typePrefix.Concat(nameHash).ToArray());
+        using IEnumerator<byte> expectedHash = SHA256.HashData(typePrefix.Concat(nameHash).ToArray()).AsEnumerable().GetEnumerator();
 
-        using IEnumerator<byte> actualHash = new ColumnTypeHash(columnType).GetEnumerator();
+        IEnumerable actualHash = new ColumnTypeHash(columnType);
 
-        bool different = false;
+        bool equal = true;
 
-        foreach (object i in expectedHash)
+        foreach (object item in actualHash)
         {
-            actualHash.MoveNext();
-            if (actualHash.Current != (byte)i)
+            expectedHash.MoveNext();
+            if ((byte)item != expectedHash.Current)
             {
-                different = true;
+                equal = false;
                 break;
             }
         }
 
-        Assert.False(different);
+        Assert.True(equal);
     }
 
     [Fact]
