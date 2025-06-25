@@ -14,8 +14,8 @@ using System.Security.Cryptography;
 
 namespace Pure.RelationalSchema.HashCodes.Tests;
 
-using Index = Index.Index;
 using Column = Column.Column;
+using Index = Index.Index;
 
 public sealed record IndexTests
 {
