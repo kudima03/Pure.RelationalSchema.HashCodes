@@ -1,21 +1,19 @@
 ﻿using Pure.HashCodes;
 using Pure.Primitives.Abstractions.Bool;
-using Pure.Primitives.Abstractions.String;
+using Pure.Primitives.Bool;
 using Pure.Primitives.Number;
 using Pure.Primitives.Random.Bool;
 using Pure.Primitives.Random.String;
-using Pure.Primitives.String;
 using Pure.RelationalSchema.Abstractions.Column;
-using Pure.RelationalSchema.Abstractions.ColumnType;
-using Pure.RelationalSchema.Abstractions.Index;
 using Pure.RelationalSchema.ColumnType;
 using System.Collections;
 using System.Security.Cryptography;
+using String = Pure.Primitives.String.String;
 
 namespace Pure.RelationalSchema.HashCodes.Tests;
 
-using Column = Column.Column;
 using Index = Index.Index;
+using Column = Column.Column;
 
 public sealed record IndexTests
 {
@@ -64,7 +62,7 @@ public sealed record IndexTests
     }
 
     [Fact]
-    public void ProduceCorrectHash()
+    public void CorrectComputingSteps()
     {
         byte[] typePrefix = [142, 165, 151, 1, 117, 182, 22, 125, 191, 1, 173, 241, 145, 57, 67, 244];
 
@@ -94,29 +92,37 @@ public sealed record IndexTests
     [Fact]
     public void ColumnsOrderNotMatter()
     {
-        byte[] typePrefix = [142, 165, 151, 1, 117, 182, 22, 125, 191, 1, 173, 241, 145, 57, 67, 244];
-
-        IBool uniqueness = new RandomBool();
+        IBool uniqueness = new False();
 
         IReadOnlyCollection<IColumn> columns =
         [
-            new Column(new RandomString(new UShort(10)), new DateColumnType()),
-            new Column(new RandomString(new UShort(10)), new TimeColumnType()),
-            new Column(new RandomString(new UShort(10)), new UShortColumnType()),
-            new Column(new RandomString(new UShort(10)), new LongColumnType()),
-            new Column(new RandomString(new UShort(10)), new IntColumnType()),
+            new Column(new String("asd"), new DateColumnType()),
+            new Column(new String("qwe"), new TimeColumnType()),
+            new Column(new String("asd"), new UShortColumnType()),
+            new Column(new String("zxc"), new LongColumnType()),
+            new Column(new String("tyu"), new IntColumnType()),
         ];
 
-        IDeterminedHash uniquenessHash = new DeterminedHash(uniqueness);
+        Assert.Equal("975E8091A716FB7C61915C355449EDD67E98863259CC592D892F9639051C557E",
+            Convert.ToHexString(new IndexHash(new Index(uniqueness, columns.Reverse())).ToArray()));
+    }
 
-        IDeterminedHash columnsHash = new AggregatedHash(columns.Select(x => new ColumnHash(x)));
+    [Fact]
+    public void Determined()
+    {
+        IBool uniqueness = new False();
 
-        Assert.Equal(
-            SHA256.HashData(typePrefix
-                .Concat(uniquenessHash)
-                .Concat(columnsHash)
-                .ToArray()),
-            new IndexHash(new Index(uniqueness, columns.Reverse())));
+        IReadOnlyCollection<IColumn> columns =
+        [
+            new Column(new String("asd"), new DateColumnType()),
+            new Column(new String("qwe"), new TimeColumnType()),
+            new Column(new String("asd"), new UShortColumnType()),
+            new Column(new String("zxc"), new LongColumnType()),
+            new Column(new String("tyu"), new IntColumnType()),
+        ];
+
+        Assert.Equal("975E8091A716FB7C61915C355449EDD67E98863259CC592D892F9639051C557E",
+            Convert.ToHexString(new IndexHash(new Index(uniqueness, columns)).ToArray()));
     }
 
     [Fact]
