@@ -128,7 +128,7 @@ public sealed record IndexTests
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
-        Assert.Throws<NotSupportedException>(() => new IndexHash(new Index(new RandomBool(), [])).ToString());
+        Assert.Throws<NotSupportedException>(() => new IndexHash(new Index(new RandomBool(), [])).GetHashCode());
     }
 
     [Fact]
