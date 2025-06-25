@@ -12,9 +12,9 @@ using String = Pure.Primitives.String.String;
 namespace Pure.RelationalSchema.HashCodes.Tests;
 
 using Column = Column.Column;
+using ForeignKey = ForeignKey.ForeignKey;
 using Index = Index.Index;
 using Table = Table.Table;
-using ForeignKey = ForeignKey.ForeignKey;
 
 public sealed record ForeignKeyHashTests
 {
@@ -43,7 +43,7 @@ public sealed record ForeignKeyHashTests
 
         using IEnumerator<byte> expectedHash = SHA256.HashData(typePrefix
                 .Concat(new TableHash(referencingTable))
-                .Concat(new ColumnHash(referencingTable.Columns.First()))    
+                .Concat(new ColumnHash(referencingTable.Columns.First()))
                 .Concat(new TableHash(referencedTable))
                 .Concat(new ColumnHash(referencedTable.Columns.First()))
                 .ToArray())
@@ -96,12 +96,12 @@ public sealed record ForeignKeyHashTests
         Assert.Equal(
             SHA256.HashData(typePrefix
                 .Concat(new TableHash(referencingTable))
-                .Concat(new ColumnHash(referencingTable.Columns.First()))    
+                .Concat(new ColumnHash(referencingTable.Columns.First()))
                 .Concat(new TableHash(referencedTable))
                 .Concat(new ColumnHash(referencedTable.Columns.First()))
                 .ToArray()),
             new ForeignKeyHash(new ForeignKey(referencingTable,
-                referencingTable.Columns.First(), 
+                referencingTable.Columns.First(),
                 referencedTable,
                 referencedTable.Columns.First())));
     }
@@ -128,7 +128,7 @@ public sealed record ForeignKeyHashTests
         ITable referencedTable = new Table(new String("Sample name1"), columns.Skip(2).Take(2), indexes.Skip(1).Take(1));
 
         IForeignKey foreignKey = new ForeignKey(referencingTable,
-            referencingTable.Columns.First(), 
+            referencingTable.Columns.First(),
             referencedTable,
             referencedTable.Columns.First());
 
