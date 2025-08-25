@@ -16,7 +16,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pure.HashCodes" Version="0.4.0" />
+    <PackageReference Include="Pure.HashCodes" Version="1.0.0" />
     <PackageReference Include="Pure.RelationalSchema.Abstractions" Version="0.2.1" />
   </ItemGroup>
 
