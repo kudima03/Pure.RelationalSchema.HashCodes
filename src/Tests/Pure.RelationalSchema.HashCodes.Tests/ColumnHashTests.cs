@@ -25,7 +25,9 @@ public sealed record ColumnHashTests
         IDeterminedHash columnTypeHash = new ColumnTypeHash(columnType);
 
         using IEnumerator<byte> expectedHash = SHA256
-            .HashData(typePrefix.Concat(nameHash).Concat(columnTypeHash).ToArray()).AsEnumerable().GetEnumerator();
+            .HashData(typePrefix.Concat(nameHash).Concat(columnTypeHash).ToArray())
+            .AsEnumerable()
+            .GetEnumerator();
 
         IEnumerable actualHash = new ColumnHash(new Column(name, columnType));
 
@@ -55,30 +57,24 @@ public sealed record ColumnHashTests
         IDeterminedHash columnTypeHash = new ColumnTypeHash(columnType);
 
         Assert.Equal(
-            SHA256.HashData(typePrefix
-                .Concat(nameHash)
-                .Concat(columnTypeHash)
-                .ToArray()),
-            new ColumnHash(new Column(name, columnType)));
+            SHA256.HashData(typePrefix.Concat(nameHash).Concat(columnTypeHash).ToArray()),
+            new ColumnHash(new Column(name, columnType))
+        );
     }
 
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
         Assert.Throws<NotSupportedException>(() =>
-            new ColumnHash(
-                new Column(
-                    new EmptyString(),
-                    new UIntColumnType())).GetHashCode());
+            new ColumnHash(new Column(new EmptyString(), new UIntColumnType())).GetHashCode()
+        );
     }
 
     [Fact]
     public void ThrowsExceptionOnToString()
     {
         Assert.Throws<NotSupportedException>(() =>
-            new ColumnHash(
-                new Column(
-                    new EmptyString(),
-                    new UIntColumnType())).ToString());
+            new ColumnHash(new Column(new EmptyString(), new UIntColumnType())).ToString()
+        );
     }
 }

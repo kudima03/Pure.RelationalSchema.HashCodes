@@ -11,13 +11,34 @@ public sealed record ColumnTypeHashTests
     [Fact]
     public void EnumeratesAsUntyped()
     {
-        byte[] typePrefix = [8, 157, 151, 1, 149, 98, 28, 119, 130, 158, 187, 34, 130, 255, 222, 135];
+        byte[] typePrefix =
+        [
+            8,
+            157,
+            151,
+            1,
+            149,
+            98,
+            28,
+            119,
+            130,
+            158,
+            187,
+            34,
+            130,
+            255,
+            222,
+            135,
+        ];
 
         IColumnType columnType = new StringColumnType();
 
         IDeterminedHash nameHash = new DeterminedHash(columnType.Name);
 
-        using IEnumerator<byte> expectedHash = SHA256.HashData(typePrefix.Concat(nameHash).ToArray()).AsEnumerable().GetEnumerator();
+        using IEnumerator<byte> expectedHash = SHA256
+            .HashData(typePrefix.Concat(nameHash).ToArray())
+            .AsEnumerable()
+            .GetEnumerator();
 
         IEnumerable actualHash = new ColumnTypeHash(columnType);
 
@@ -39,7 +60,25 @@ public sealed record ColumnTypeHashTests
     [Fact]
     public void ProduceCorrectHash()
     {
-        byte[] typePrefix = [8, 157, 151, 1, 149, 98, 28, 119, 130, 158, 187, 34, 130, 255, 222, 135];
+        byte[] typePrefix =
+        [
+            8,
+            157,
+            151,
+            1,
+            149,
+            98,
+            28,
+            119,
+            130,
+            158,
+            187,
+            34,
+            130,
+            255,
+            222,
+            135,
+        ];
 
         IColumnType columnType = new StringColumnType();
 
@@ -53,12 +92,16 @@ public sealed record ColumnTypeHashTests
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
-        Assert.Throws<NotSupportedException>(() => new ColumnTypeHash(new DateColumnType()).GetHashCode());
+        Assert.Throws<NotSupportedException>(() =>
+            new ColumnTypeHash(new DateColumnType()).GetHashCode()
+        );
     }
 
     [Fact]
     public void ThrowsExceptionOnToString()
     {
-        Assert.Throws<NotSupportedException>(() => new ColumnTypeHash(new DateColumnType()).ToString());
+        Assert.Throws<NotSupportedException>(() =>
+            new ColumnTypeHash(new DateColumnType()).ToString()
+        );
     }
 }

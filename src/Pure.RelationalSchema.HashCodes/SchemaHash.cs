@@ -8,7 +8,22 @@ public sealed record SchemaHash : IDeterminedHash
 {
     private static readonly byte[] TypePrefix =
     [
-        253, 165, 151, 1, 96, 51, 234, 121, 155, 41, 25, 146, 55, 243, 188, 110
+        253,
+        165,
+        151,
+        1,
+        96,
+        51,
+        234,
+        121,
+        155,
+        41,
+        25,
+        146,
+        55,
+        243,
+        188,
+        110,
     ];
 
     private readonly ISchema _schema;
@@ -20,11 +35,16 @@ public sealed record SchemaHash : IDeterminedHash
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return new DeterminedHash(TypePrefix
+        return new DeterminedHash(
+            TypePrefix
                 .Concat(new DeterminedHash(_schema.Name))
                 .Concat(new AggregatedHash(_schema.Tables.Select(column => new TableHash(column))))
-                .Concat(new AggregatedHash(_schema.ForeignKeys.Select(foreignKey => new ForeignKeyHash(foreignKey)))))
-            .GetEnumerator();
+                .Concat(
+                    new AggregatedHash(
+                        _schema.ForeignKeys.Select(foreignKey => new ForeignKeyHash(foreignKey))
+                    )
+                )
+        ).GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()

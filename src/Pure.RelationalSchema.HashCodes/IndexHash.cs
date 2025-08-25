@@ -9,7 +9,22 @@ public sealed record IndexHash : IDeterminedHash
 {
     private static readonly byte[] TypePrefix =
     [
-        142, 165, 151, 1, 117, 182, 22, 125, 191, 1, 173, 241, 145, 57, 67, 244
+        142,
+        165,
+        151,
+        1,
+        117,
+        182,
+        22,
+        125,
+        191,
+        1,
+        173,
+        241,
+        145,
+        57,
+        67,
+        244,
     ];
 
     private readonly IIndex _index;
@@ -21,10 +36,11 @@ public sealed record IndexHash : IDeterminedHash
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return new DeterminedHash(TypePrefix
+        return new DeterminedHash(
+            TypePrefix
                 .Concat(new DeterminedHash(_index.IsUnique))
-                .Concat(new AggregatedHash(_index.Columns.Select(column => new ColumnHash(column)))))
-            .GetEnumerator();
+                .Concat(new AggregatedHash(_index.Columns.Select(column => new ColumnHash(column))))
+        ).GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
