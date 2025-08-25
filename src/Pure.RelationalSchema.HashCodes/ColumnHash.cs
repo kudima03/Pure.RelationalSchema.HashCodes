@@ -8,7 +8,22 @@ public sealed record ColumnHash : IDeterminedHash
 {
     private static readonly byte[] TypePrefix =
     [
-        41, 163, 151, 1, 29, 173, 73, 119, 138, 216, 188, 7, 188, 71, 127, 69
+        41,
+        163,
+        151,
+        1,
+        29,
+        173,
+        73,
+        119,
+        138,
+        216,
+        188,
+        7,
+        188,
+        71,
+        127,
+        69,
     ];
 
     private readonly IColumn _column;
@@ -20,10 +35,11 @@ public sealed record ColumnHash : IDeterminedHash
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return new DeterminedHash(TypePrefix
-            .Concat(new DeterminedHash(_column.Name))
-            .Concat(new ColumnTypeHash(_column.Type)))
-            .GetEnumerator();
+        return new DeterminedHash(
+            TypePrefix
+                .Concat(new DeterminedHash(_column.Name))
+                .Concat(new ColumnTypeHash(_column.Type))
+        ).GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()

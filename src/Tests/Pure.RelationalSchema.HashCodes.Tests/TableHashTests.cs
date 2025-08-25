@@ -24,7 +24,25 @@ public sealed record TableHashTests
     [Fact]
     public void EnumeratesAsUntyped()
     {
-        byte[] typePrefix = [184, 165, 151, 1, 198, 98, 50, 119, 182, 181, 80, 101, 192, 154, 105, 5];
+        byte[] typePrefix =
+        [
+            184,
+            165,
+            151,
+            1,
+            198,
+            98,
+            50,
+            119,
+            182,
+            181,
+            80,
+            101,
+            192,
+            154,
+            105,
+            5,
+        ];
 
         IString name = new RandomString(new UShort(10));
 
@@ -40,18 +58,15 @@ public sealed record TableHashTests
         IReadOnlyCollection<IIndex> indexes =
         [
             new Index(new True(), columns.Take(2)),
-            new Index(new True(), columns.Skip(2).Take(2))
+            new Index(new True(), columns.Skip(2).Take(2)),
         ];
 
         IDeterminedHash nameHash = new DeterminedHash(name);
         IDeterminedHash columnsHash = new AggregatedHash(columns.Select(x => new ColumnHash(x)));
         IDeterminedHash indexesHash = new AggregatedHash(indexes.Select(x => new IndexHash(x)));
 
-        using IEnumerator<byte> expectedHash = SHA256.HashData(typePrefix
-                .Concat(nameHash)
-                .Concat(columnsHash)
-                .Concat(indexesHash)
-                .ToArray())
+        using IEnumerator<byte> expectedHash = SHA256
+            .HashData(typePrefix.Concat(nameHash).Concat(columnsHash).Concat(indexesHash).ToArray())
             .AsEnumerable()
             .GetEnumerator();
 
@@ -75,7 +90,25 @@ public sealed record TableHashTests
     [Fact]
     public void CorrectComputingSteps()
     {
-        byte[] typePrefix = [184, 165, 151, 1, 198, 98, 50, 119, 182, 181, 80, 101, 192, 154, 105, 5];
+        byte[] typePrefix =
+        [
+            184,
+            165,
+            151,
+            1,
+            198,
+            98,
+            50,
+            119,
+            182,
+            181,
+            80,
+            101,
+            192,
+            154,
+            105,
+            5,
+        ];
 
         IString name = new RandomString(new UShort(10));
 
@@ -91,7 +124,7 @@ public sealed record TableHashTests
         IReadOnlyCollection<IIndex> indexes =
         [
             new Index(new True(), columns.Take(2)),
-            new Index(new True(), columns.Skip(2).Take(2))
+            new Index(new True(), columns.Skip(2).Take(2)),
         ];
 
         IDeterminedHash nameHash = new DeterminedHash(name);
@@ -99,12 +132,11 @@ public sealed record TableHashTests
         IDeterminedHash indexesHash = new AggregatedHash(indexes.Select(x => new IndexHash(x)));
 
         Assert.Equal(
-            SHA256.HashData(typePrefix
-                .Concat(nameHash)
-                .Concat(columnsHash)
-                .Concat(indexesHash)
-                .ToArray()),
-            new TableHash(new Table(name, columns, indexes)));
+            SHA256.HashData(
+                typePrefix.Concat(nameHash).Concat(columnsHash).Concat(indexesHash).ToArray()
+            ),
+            new TableHash(new Table(name, columns, indexes))
+        );
     }
 
     [Fact]
@@ -124,11 +156,15 @@ public sealed record TableHashTests
         IReadOnlyCollection<IIndex> indexes =
         [
             new Index(new True(), columns.Take(2)),
-            new Index(new True(), columns.Skip(2).Take(2))
+            new Index(new True(), columns.Skip(2).Take(2)),
         ];
 
-        Assert.Equal("BEF6FF6D2D6180367A589DDF981080F3EAC06FBE2221321CAAEDDEF87B401245",
-            Convert.ToHexString(new TableHash(new Table(name, columns.Reverse(), indexes)).ToArray()));
+        Assert.Equal(
+            "BEF6FF6D2D6180367A589DDF981080F3EAC06FBE2221321CAAEDDEF87B401245",
+            Convert.ToHexString(
+                new TableHash(new Table(name, columns.Reverse(), indexes)).ToArray()
+            )
+        );
     }
 
     [Fact]
@@ -148,11 +184,15 @@ public sealed record TableHashTests
         IReadOnlyCollection<IIndex> indexes =
         [
             new Index(new True(), columns.Take(2)),
-            new Index(new True(), columns.Skip(2).Take(2))
+            new Index(new True(), columns.Skip(2).Take(2)),
         ];
 
-        Assert.Equal("BEF6FF6D2D6180367A589DDF981080F3EAC06FBE2221321CAAEDDEF87B401245",
-            Convert.ToHexString(new TableHash(new Table(name, columns, indexes.Reverse())).ToArray()));
+        Assert.Equal(
+            "BEF6FF6D2D6180367A589DDF981080F3EAC06FBE2221321CAAEDDEF87B401245",
+            Convert.ToHexString(
+                new TableHash(new Table(name, columns, indexes.Reverse())).ToArray()
+            )
+        );
     }
 
     [Fact]
@@ -172,22 +212,28 @@ public sealed record TableHashTests
         IReadOnlyCollection<IIndex> indexes =
         [
             new Index(new True(), columns.Take(2)),
-            new Index(new True(), columns.Skip(2).Take(2))
+            new Index(new True(), columns.Skip(2).Take(2)),
         ];
 
-        Assert.Equal("BEF6FF6D2D6180367A589DDF981080F3EAC06FBE2221321CAAEDDEF87B401245",
-            Convert.ToHexString(new TableHash(new Table(name, columns, indexes)).ToArray()));
+        Assert.Equal(
+            "BEF6FF6D2D6180367A589DDF981080F3EAC06FBE2221321CAAEDDEF87B401245",
+            Convert.ToHexString(new TableHash(new Table(name, columns, indexes)).ToArray())
+        );
     }
 
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
-        Assert.Throws<NotSupportedException>(() => new TableHash(new Table(new EmptyString(), [], [])).GetHashCode());
+        Assert.Throws<NotSupportedException>(() =>
+            new TableHash(new Table(new EmptyString(), [], [])).GetHashCode()
+        );
     }
 
     [Fact]
     public void ThrowsExceptionOnToString()
     {
-        Assert.Throws<NotSupportedException>(() => new TableHash(new Table(new EmptyString(), [], [])).ToString());
+        Assert.Throws<NotSupportedException>(() =>
+            new TableHash(new Table(new EmptyString(), [], [])).ToString()
+        );
     }
 }

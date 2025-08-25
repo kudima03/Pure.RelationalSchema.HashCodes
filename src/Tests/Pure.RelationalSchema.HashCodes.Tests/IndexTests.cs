@@ -20,7 +20,25 @@ public sealed record IndexTests
     [Fact]
     public void EnumeratesAsUntyped()
     {
-        byte[] typePrefix = [142, 165, 151, 1, 117, 182, 22, 125, 191, 1, 173, 241, 145, 57, 67, 244];
+        byte[] typePrefix =
+        [
+            142,
+            165,
+            151,
+            1,
+            117,
+            182,
+            22,
+            125,
+            191,
+            1,
+            173,
+            241,
+            145,
+            57,
+            67,
+            244,
+        ];
 
         IBool uniqueness = new RandomBool();
 
@@ -37,10 +55,8 @@ public sealed record IndexTests
 
         IDeterminedHash columnsHash = new AggregatedHash(columns.Select(x => new ColumnHash(x)));
 
-        using IEnumerator<byte> expectedHash = SHA256.HashData(typePrefix
-            .Concat(uniquenessHash)
-            .Concat(columnsHash)
-            .ToArray())
+        using IEnumerator<byte> expectedHash = SHA256
+            .HashData(typePrefix.Concat(uniquenessHash).Concat(columnsHash).ToArray())
             .AsEnumerable()
             .GetEnumerator();
 
@@ -64,7 +80,25 @@ public sealed record IndexTests
     [Fact]
     public void CorrectComputingSteps()
     {
-        byte[] typePrefix = [142, 165, 151, 1, 117, 182, 22, 125, 191, 1, 173, 241, 145, 57, 67, 244];
+        byte[] typePrefix =
+        [
+            142,
+            165,
+            151,
+            1,
+            117,
+            182,
+            22,
+            125,
+            191,
+            1,
+            173,
+            241,
+            145,
+            57,
+            67,
+            244,
+        ];
 
         IBool uniqueness = new RandomBool();
 
@@ -82,11 +116,9 @@ public sealed record IndexTests
         IDeterminedHash columnsHash = new AggregatedHash(columns.Select(x => new ColumnHash(x)));
 
         Assert.Equal(
-            SHA256.HashData(typePrefix
-                .Concat(uniquenessHash)
-                .Concat(columnsHash)
-                .ToArray()),
-            new IndexHash(new Index(uniqueness, columns)));
+            SHA256.HashData(typePrefix.Concat(uniquenessHash).Concat(columnsHash).ToArray()),
+            new IndexHash(new Index(uniqueness, columns))
+        );
     }
 
     [Fact]
@@ -103,8 +135,10 @@ public sealed record IndexTests
             new Column(new String("tyu"), new IntColumnType()),
         ];
 
-        Assert.Equal("975E8091A716FB7C61915C355449EDD67E98863259CC592D892F9639051C557E",
-            Convert.ToHexString(new IndexHash(new Index(uniqueness, columns.Reverse())).ToArray()));
+        Assert.Equal(
+            "975E8091A716FB7C61915C355449EDD67E98863259CC592D892F9639051C557E",
+            Convert.ToHexString(new IndexHash(new Index(uniqueness, columns.Reverse())).ToArray())
+        );
     }
 
     [Fact]
@@ -121,19 +155,25 @@ public sealed record IndexTests
             new Column(new String("tyu"), new IntColumnType()),
         ];
 
-        Assert.Equal("975E8091A716FB7C61915C355449EDD67E98863259CC592D892F9639051C557E",
-            Convert.ToHexString(new IndexHash(new Index(uniqueness, columns)).ToArray()));
+        Assert.Equal(
+            "975E8091A716FB7C61915C355449EDD67E98863259CC592D892F9639051C557E",
+            Convert.ToHexString(new IndexHash(new Index(uniqueness, columns)).ToArray())
+        );
     }
 
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
-        Assert.Throws<NotSupportedException>(() => new IndexHash(new Index(new RandomBool(), [])).GetHashCode());
+        Assert.Throws<NotSupportedException>(() =>
+            new IndexHash(new Index(new RandomBool(), [])).GetHashCode()
+        );
     }
 
     [Fact]
     public void ThrowsExceptionOnToString()
     {
-        Assert.Throws<NotSupportedException>(() => new IndexHash(new Index(new RandomBool(), [])).ToString());
+        Assert.Throws<NotSupportedException>(() =>
+            new IndexHash(new Index(new RandomBool(), [])).ToString()
+        );
     }
 }

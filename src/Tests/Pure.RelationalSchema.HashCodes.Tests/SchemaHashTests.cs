@@ -27,7 +27,25 @@ public sealed record SchemaHashTests
     [Fact]
     public void EnumeratesAsUntyped()
     {
-        byte[] typePrefix = [253, 165, 151, 1, 96, 51, 234, 121, 155, 41, 25, 146, 55, 243, 188, 110];
+        byte[] typePrefix =
+        [
+            253,
+            165,
+            151,
+            1,
+            96,
+            51,
+            234,
+            121,
+            155,
+            41,
+            25,
+            146,
+            55,
+            243,
+            188,
+            110,
+        ];
 
         IString name = new RandomString(new UShort(10));
 
@@ -35,9 +53,9 @@ public sealed record SchemaHashTests
         [
             new Column(new RandomString(new UShort(10)), new DateColumnType()),
             new Column(new RandomString(new UShort(10)), new TimeColumnType()),
-            new Column(new RandomString (new UShort(10)), new UShortColumnType()),
-            new Column(new RandomString (new UShort(10)), new LongColumnType()),
-            new Column(new RandomString (new UShort(10)), new IntColumnType()),
+            new Column(new RandomString(new UShort(10)), new UShortColumnType()),
+            new Column(new RandomString(new UShort(10)), new LongColumnType()),
+            new Column(new RandomString(new UShort(10)), new IntColumnType()),
         ];
 
         IReadOnlyCollection<IIndex> indexes =
@@ -45,7 +63,7 @@ public sealed record SchemaHashTests
             new Index(new RandomBool(), columns.Take(2)),
             new Index(new RandomBool(), columns.Skip(2).Take(2)),
             new Index(new RandomBool(), columns.Take(1)),
-            new Index(new RandomBool(), columns.Skip(2).Take(1))
+            new Index(new RandomBool(), columns.Skip(2).Take(1)),
         ];
 
         IReadOnlyCollection<ITable> tables =
@@ -58,22 +76,28 @@ public sealed record SchemaHashTests
 
         IReadOnlyCollection<IForeignKey> foreignKeys =
         [
-            new ForeignKey(tables.First(),
+            new ForeignKey(
+                tables.First(),
                 tables.First().Columns.First(),
                 tables.Skip(1).First(),
-                tables.Skip(1).First().Columns.First()),
-
-            new ForeignKey(tables.Skip(2).First(),
+                tables.Skip(1).First().Columns.First()
+            ),
+            new ForeignKey(
+                tables.Skip(2).First(),
                 tables.Skip(2).First().Columns.First(),
                 tables.Skip(3).First(),
-                tables.Skip(3).First().Columns.First()),
+                tables.Skip(3).First().Columns.First()
+            ),
         ];
 
-        using IEnumerator<byte> expectedHash = SHA256.HashData(typePrefix
-                .Concat(new DeterminedHash(name))
-                .Concat(new AggregatedHash(tables.Select(x => new TableHash(x))))
-                .Concat(new AggregatedHash(foreignKeys.Select(x => new ForeignKeyHash(x))))
-                .ToArray())
+        using IEnumerator<byte> expectedHash = SHA256
+            .HashData(
+                typePrefix
+                    .Concat(new DeterminedHash(name))
+                    .Concat(new AggregatedHash(tables.Select(x => new TableHash(x))))
+                    .Concat(new AggregatedHash(foreignKeys.Select(x => new ForeignKeyHash(x))))
+                    .ToArray()
+            )
             .AsEnumerable()
             .GetEnumerator();
 
@@ -97,7 +121,25 @@ public sealed record SchemaHashTests
     [Fact]
     public void CorrectComputingSteps()
     {
-        byte[] typePrefix = [253, 165, 151, 1, 96, 51, 234, 121, 155, 41, 25, 146, 55, 243, 188, 110];
+        byte[] typePrefix =
+        [
+            253,
+            165,
+            151,
+            1,
+            96,
+            51,
+            234,
+            121,
+            155,
+            41,
+            25,
+            146,
+            55,
+            243,
+            188,
+            110,
+        ];
 
         IString name = new RandomString(new UShort(10));
 
@@ -105,9 +147,9 @@ public sealed record SchemaHashTests
         [
             new Column(new RandomString(new UShort(10)), new DateColumnType()),
             new Column(new RandomString(new UShort(10)), new TimeColumnType()),
-            new Column(new RandomString (new UShort(10)), new UShortColumnType()),
-            new Column(new RandomString (new UShort(10)), new LongColumnType()),
-            new Column(new RandomString (new UShort(10)), new IntColumnType()),
+            new Column(new RandomString(new UShort(10)), new UShortColumnType()),
+            new Column(new RandomString(new UShort(10)), new LongColumnType()),
+            new Column(new RandomString(new UShort(10)), new IntColumnType()),
         ];
 
         IReadOnlyCollection<IIndex> indexes =
@@ -115,7 +157,7 @@ public sealed record SchemaHashTests
             new Index(new RandomBool(), columns.Take(2)),
             new Index(new RandomBool(), columns.Skip(2).Take(2)),
             new Index(new RandomBool(), columns.Take(1)),
-            new Index(new RandomBool(), columns.Skip(2).Take(1))
+            new Index(new RandomBool(), columns.Skip(2).Take(1)),
         ];
 
         IReadOnlyCollection<ITable> tables =
@@ -128,24 +170,30 @@ public sealed record SchemaHashTests
 
         IReadOnlyCollection<IForeignKey> foreignKeys =
         [
-            new ForeignKey(tables.First(),
+            new ForeignKey(
+                tables.First(),
                 tables.First().Columns.First(),
                 tables.Skip(1).First(),
-                tables.Skip(1).First().Columns.First()),
-
-            new ForeignKey(tables.Skip(2).First(),
+                tables.Skip(1).First().Columns.First()
+            ),
+            new ForeignKey(
+                tables.Skip(2).First(),
                 tables.Skip(2).First().Columns.First(),
                 tables.Skip(3).First(),
-                tables.Skip(3).First().Columns.First()),
+                tables.Skip(3).First().Columns.First()
+            ),
         ];
 
         Assert.Equal(
-            SHA256.HashData(typePrefix
-                .Concat(new DeterminedHash(name))
-                .Concat(new AggregatedHash(tables.Select(x => new TableHash(x))))
-                .Concat(new AggregatedHash(foreignKeys.Select(x => new ForeignKeyHash(x))))
-                .ToArray()),
-            new SchemaHash(new Schema(name, tables, foreignKeys)));
+            SHA256.HashData(
+                typePrefix
+                    .Concat(new DeterminedHash(name))
+                    .Concat(new AggregatedHash(tables.Select(x => new TableHash(x))))
+                    .Concat(new AggregatedHash(foreignKeys.Select(x => new ForeignKeyHash(x))))
+                    .ToArray()
+            ),
+            new SchemaHash(new Schema(name, tables, foreignKeys))
+        );
     }
 
     [Fact]
@@ -167,7 +215,7 @@ public sealed record SchemaHashTests
             new Index(new True(), columns.Take(2)),
             new Index(new True(), columns.Skip(2).Take(2)),
             new Index(new True(), columns.Take(1)),
-            new Index(new True(), columns.Skip(2).Take(1))
+            new Index(new True(), columns.Skip(2).Take(1)),
         ];
 
         IReadOnlyCollection<ITable> tables =
@@ -180,19 +228,26 @@ public sealed record SchemaHashTests
 
         IReadOnlyCollection<IForeignKey> foreignKeys =
         [
-            new ForeignKey(tables.First(),
+            new ForeignKey(
+                tables.First(),
                 tables.First().Columns.First(),
                 tables.Skip(1).First(),
-                tables.Skip(1).First().Columns.First()),
-
-            new ForeignKey(tables.Skip(2).First(),
+                tables.Skip(1).First().Columns.First()
+            ),
+            new ForeignKey(
+                tables.Skip(2).First(),
                 tables.Skip(2).First().Columns.First(),
                 tables.Skip(3).First(),
-                tables.Skip(3).First().Columns.First()),
+                tables.Skip(3).First().Columns.First()
+            ),
         ];
 
-        Assert.Equal("4E3A969A5633DAAA88ED5BD30FFFA35C0679C7C2B0C38CD52567445C4433186B",
-            Convert.ToHexString(new SchemaHash(new Schema(name, tables.Reverse(), foreignKeys)).ToArray()));
+        Assert.Equal(
+            "4E3A969A5633DAAA88ED5BD30FFFA35C0679C7C2B0C38CD52567445C4433186B",
+            Convert.ToHexString(
+                new SchemaHash(new Schema(name, tables.Reverse(), foreignKeys)).ToArray()
+            )
+        );
     }
 
     [Fact]
@@ -214,7 +269,7 @@ public sealed record SchemaHashTests
             new Index(new True(), columns.Take(2)),
             new Index(new True(), columns.Skip(2).Take(2)),
             new Index(new True(), columns.Take(1)),
-            new Index(new True(), columns.Skip(2).Take(1))
+            new Index(new True(), columns.Skip(2).Take(1)),
         ];
 
         IReadOnlyCollection<ITable> tables =
@@ -227,19 +282,26 @@ public sealed record SchemaHashTests
 
         IReadOnlyCollection<IForeignKey> foreignKeys =
         [
-            new ForeignKey(tables.First(),
+            new ForeignKey(
+                tables.First(),
                 tables.First().Columns.First(),
                 tables.Skip(1).First(),
-                tables.Skip(1).First().Columns.First()),
-
-            new ForeignKey(tables.Skip(2).First(),
+                tables.Skip(1).First().Columns.First()
+            ),
+            new ForeignKey(
+                tables.Skip(2).First(),
                 tables.Skip(2).First().Columns.First(),
                 tables.Skip(3).First(),
-                tables.Skip(3).First().Columns.First()),
+                tables.Skip(3).First().Columns.First()
+            ),
         ];
 
-        Assert.Equal("4E3A969A5633DAAA88ED5BD30FFFA35C0679C7C2B0C38CD52567445C4433186B",
-            Convert.ToHexString(new SchemaHash(new Schema(name, tables, foreignKeys.Reverse())).ToArray()));
+        Assert.Equal(
+            "4E3A969A5633DAAA88ED5BD30FFFA35C0679C7C2B0C38CD52567445C4433186B",
+            Convert.ToHexString(
+                new SchemaHash(new Schema(name, tables, foreignKeys.Reverse())).ToArray()
+            )
+        );
     }
 
     [Fact]
@@ -261,7 +323,7 @@ public sealed record SchemaHashTests
             new Index(new True(), columns.Take(2)),
             new Index(new True(), columns.Skip(2).Take(2)),
             new Index(new True(), columns.Take(1)),
-            new Index(new True(), columns.Skip(2).Take(1))
+            new Index(new True(), columns.Skip(2).Take(1)),
         ];
 
         IReadOnlyCollection<ITable> tables =
@@ -274,30 +336,39 @@ public sealed record SchemaHashTests
 
         IReadOnlyCollection<IForeignKey> foreignKeys =
         [
-            new ForeignKey(tables.First(),
+            new ForeignKey(
+                tables.First(),
                 tables.First().Columns.First(),
                 tables.Skip(1).First(),
-                tables.Skip(1).First().Columns.First()),
-
-            new ForeignKey(tables.Skip(2).First(),
+                tables.Skip(1).First().Columns.First()
+            ),
+            new ForeignKey(
+                tables.Skip(2).First(),
                 tables.Skip(2).First().Columns.First(),
                 tables.Skip(3).First(),
-                tables.Skip(3).First().Columns.First()),
+                tables.Skip(3).First().Columns.First()
+            ),
         ];
 
-        Assert.Equal("4E3A969A5633DAAA88ED5BD30FFFA35C0679C7C2B0C38CD52567445C4433186B",
-            Convert.ToHexString(new SchemaHash(new Schema(name, tables, foreignKeys)).ToArray()));
+        Assert.Equal(
+            "4E3A969A5633DAAA88ED5BD30FFFA35C0679C7C2B0C38CD52567445C4433186B",
+            Convert.ToHexString(new SchemaHash(new Schema(name, tables, foreignKeys)).ToArray())
+        );
     }
 
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
-        Assert.Throws<NotSupportedException>(() => new SchemaHash(new Schema(new EmptyString(), [], [])).GetHashCode());
+        Assert.Throws<NotSupportedException>(() =>
+            new SchemaHash(new Schema(new EmptyString(), [], [])).GetHashCode()
+        );
     }
 
     [Fact]
     public void ThrowsExceptionOnToString()
     {
-        Assert.Throws<NotSupportedException>(() => new SchemaHash(new Schema(new EmptyString(), [], [])).ToString());
+        Assert.Throws<NotSupportedException>(() =>
+            new SchemaHash(new Schema(new EmptyString(), [], [])).ToString()
+        );
     }
 }
