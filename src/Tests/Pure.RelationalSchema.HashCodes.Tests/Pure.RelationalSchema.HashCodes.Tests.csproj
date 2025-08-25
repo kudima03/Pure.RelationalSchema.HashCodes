@@ -1,12 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Pure.Primitives.Random" Version="0.1.1" />
     <PackageReference Include="Pure.RelationalSchema" Version="0.1.0" />
@@ -16,13 +14,10 @@
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\Pure.RelationalSchema.HashCodes\Pure.RelationalSchema.HashCodes.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
-
 </Project>
