@@ -1,6 +1,6 @@
 ﻿using Pure.HashCodes;
 using Pure.RelationalSchema.Abstractions.ColumnType;
-using Pure.RelationalSchema.ColumnType;
+using Pure.RelationalSchema.Random;
 using System.Collections;
 using System.Security.Cryptography;
 
@@ -8,39 +8,37 @@ namespace Pure.RelationalSchema.HashCodes.Tests;
 
 public sealed record ColumnTypeHashTests
 {
+    private readonly byte[] _typePrefix =
+    [
+        8,
+        157,
+        151,
+        1,
+        149,
+        98,
+        28,
+        119,
+        130,
+        158,
+        187,
+        34,
+        130,
+        255,
+        222,
+        135,
+    ];
+
     [Fact]
     public void EnumeratesAsUntyped()
     {
-        byte[] typePrefix =
-        [
-            8,
-            157,
-            151,
-            1,
-            149,
-            98,
-            28,
-            119,
-            130,
-            158,
-            187,
-            34,
-            130,
-            255,
-            222,
-            135,
-        ];
-
-        IColumnType columnType = new StringColumnType();
-
-        IDeterminedHash nameHash = new DeterminedHash(columnType.Name);
+        IColumnType randomColumnType = new RandomColumnType();
 
         using IEnumerator<byte> expectedHash = SHA256
-            .HashData(typePrefix.Concat(nameHash).ToArray())
+            .HashData(_typePrefix.Concat(new DeterminedHash(randomColumnType.Name)).ToArray())
             .AsEnumerable()
             .GetEnumerator();
 
-        IEnumerable actualHash = new ColumnTypeHash(columnType);
+        IEnumerable actualHash = new ColumnTypeHash(randomColumnType);
 
         bool equal = true;
 
@@ -60,40 +58,20 @@ public sealed record ColumnTypeHashTests
     [Fact]
     public void ProduceCorrectHash()
     {
-        byte[] typePrefix =
-        [
-            8,
-            157,
-            151,
-            1,
-            149,
-            98,
-            28,
-            119,
-            130,
-            158,
-            187,
-            34,
-            130,
-            255,
-            222,
-            135,
-        ];
+        IColumnType columnType = new RandomColumnType();
 
-        IColumnType columnType = new StringColumnType();
+        IEnumerable<byte> expectedHash = SHA256.HashData(
+            _typePrefix.Concat(new DeterminedHash(columnType.Name)).ToArray()
+        );
 
-        IDeterminedHash nameHash = new DeterminedHash(columnType.Name);
-
-        IEnumerable<byte> hash = SHA256.HashData(typePrefix.Concat(nameHash).ToArray());
-
-        Assert.Equal(hash, new ColumnTypeHash(columnType));
+        Assert.Equal(expectedHash, new ColumnTypeHash(columnType));
     }
 
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
         Assert.Throws<NotSupportedException>(() =>
-            new ColumnTypeHash(new DateColumnType()).GetHashCode()
+            new ColumnTypeHash(new RandomColumnType()).GetHashCode()
         );
     }
 
@@ -101,7 +79,7 @@ public sealed record ColumnTypeHashTests
     public void ThrowsExceptionOnToString()
     {
         Assert.Throws<NotSupportedException>(() =>
-            new ColumnTypeHash(new DateColumnType()).ToString()
+            new ColumnTypeHash(new RandomColumnType()).ToString()
         );
     }
 }
