@@ -1,4 +1,6 @@
-﻿using Pure.HashCodes;
+using System.Collections;
+using System.Security.Cryptography;
+using Pure.HashCodes;
 using Pure.Primitives.Abstractions.String;
 using Pure.Primitives.Bool;
 using Pure.RelationalSchema.Abstractions.Column;
@@ -8,8 +10,6 @@ using Pure.RelationalSchema.Abstractions.Schema;
 using Pure.RelationalSchema.Abstractions.Table;
 using Pure.RelationalSchema.ColumnType;
 using Pure.RelationalSchema.Random;
-using System.Collections;
-using System.Security.Cryptography;
 using String = Pure.Primitives.String.String;
 
 namespace Pure.RelationalSchema.HashCodes.Tests;
@@ -49,15 +49,16 @@ public sealed record SchemaHashTests
 
         using IEnumerator<byte> expectedHash = SHA256
             .HashData(
-                _typePrefix
-                    .Concat(new DeterminedHash(randomSchema.Name))
-                    .Concat(new AggregatedHash(randomSchema.Tables.Select(x => new TableHash(x))))
-                    .Concat(
-                        new AggregatedHash(
-                            randomSchema.ForeignKeys.Select(x => new ForeignKeyHash(x))
-                        )
-                    )
-                    .ToArray()
+                [
+                    .. _typePrefix,
+                    .. new DeterminedHash(randomSchema.Name),
+                    .. new AggregatedHash(
+                        randomSchema.Tables.Select(x => new TableHash(x))
+                    ),
+                    .. new AggregatedHash(
+                        randomSchema.ForeignKeys.Select(x => new ForeignKeyHash(x))
+                    ),
+                ]
             )
             .AsEnumerable()
             .GetEnumerator();
@@ -68,7 +69,7 @@ public sealed record SchemaHashTests
 
         foreach (object item in actualHash)
         {
-            expectedHash.MoveNext();
+            _ = expectedHash.MoveNext();
             if ((byte)item != expectedHash.Current)
             {
                 equal = false;
@@ -85,13 +86,14 @@ public sealed record SchemaHashTests
         ISchema randomSchema = new RandomSchema();
 
         IEnumerable<byte> expectedHash = SHA256.HashData(
-            _typePrefix
-                .Concat(new DeterminedHash(randomSchema.Name))
-                .Concat(new AggregatedHash(randomSchema.Tables.Select(x => new TableHash(x))))
-                .Concat(
-                    new AggregatedHash(randomSchema.ForeignKeys.Select(x => new ForeignKeyHash(x)))
-                )
-                .ToArray()
+            [
+                .. _typePrefix,
+                .. new DeterminedHash(randomSchema.Name),
+                .. new AggregatedHash(randomSchema.Tables.Select(x => new TableHash(x))),
+                .. new AggregatedHash(
+                    randomSchema.ForeignKeys.Select(x => new ForeignKeyHash(x))
+                ),
+            ]
         );
 
         Assert.Equal(expectedHash, new SchemaHash(randomSchema));
@@ -108,7 +110,10 @@ public sealed record SchemaHashTests
             randomSchema.ForeignKeys
         );
 
-        Assert.Equal(new SchemaHash(randomSchema).AsEnumerable(), new SchemaHash(schemaWithReversedTables).AsEnumerable());
+        Assert.Equal(
+            new SchemaHash(randomSchema).AsEnumerable(),
+            new SchemaHash(schemaWithReversedTables).AsEnumerable()
+        );
     }
 
     [Fact]
@@ -122,7 +127,10 @@ public sealed record SchemaHashTests
             randomSchema.ForeignKeys.Reverse()
         );
 
-        Assert.Equal(new SchemaHash(randomSchema).AsEnumerable(), new SchemaHash(schemaWithReversedTables).AsEnumerable());
+        Assert.Equal(
+            new SchemaHash(randomSchema).AsEnumerable(),
+            new SchemaHash(schemaWithReversedTables).AsEnumerable()
+        );
     }
 
     [Fact]
@@ -173,14 +181,16 @@ public sealed record SchemaHashTests
 
         Assert.Equal(
             "4E3A969A5633DAAA88ED5BD30FFFA35C0679C7C2B0C38CD52567445C4433186B",
-            Convert.ToHexString(new SchemaHash(new Schema(name, tables, foreignKeys)).ToArray())
+            Convert.ToHexString(
+                new SchemaHash(new Schema(name, tables, foreignKeys)).ToArray()
+            )
         );
     }
 
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
-        Assert.Throws<NotSupportedException>(() =>
+        _ = Assert.Throws<NotSupportedException>(() =>
             new SchemaHash(new RandomSchema()).GetHashCode()
         );
     }
@@ -188,6 +198,8 @@ public sealed record SchemaHashTests
     [Fact]
     public void ThrowsExceptionOnToString()
     {
-        Assert.Throws<NotSupportedException>(() => new SchemaHash(new RandomSchema()).ToString());
+        _ = Assert.Throws<NotSupportedException>(() =>
+            new SchemaHash(new RandomSchema()).ToString()
+        );
     }
 }

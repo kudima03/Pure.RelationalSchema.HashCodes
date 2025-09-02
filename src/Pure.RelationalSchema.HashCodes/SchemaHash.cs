@@ -1,6 +1,6 @@
-﻿using Pure.HashCodes;
-using Pure.RelationalSchema.Abstractions.Schema;
 using System.Collections;
+using Pure.HashCodes;
+using Pure.RelationalSchema.Abstractions.Schema;
 
 namespace Pure.RelationalSchema.HashCodes;
 
@@ -38,10 +38,16 @@ public sealed record SchemaHash : IDeterminedHash
         return new DeterminedHash(
             TypePrefix
                 .Concat(new DeterminedHash(_schema.Name))
-                .Concat(new AggregatedHash(_schema.Tables.Select(column => new TableHash(column))))
                 .Concat(
                     new AggregatedHash(
-                        _schema.ForeignKeys.Select(foreignKey => new ForeignKeyHash(foreignKey))
+                        _schema.Tables.Select(column => new TableHash(column))
+                    )
+                )
+                .Concat(
+                    new AggregatedHash(
+                        _schema.ForeignKeys.Select(foreignKey => new ForeignKeyHash(
+                            foreignKey
+                        ))
                     )
                 )
         ).GetEnumerator();
