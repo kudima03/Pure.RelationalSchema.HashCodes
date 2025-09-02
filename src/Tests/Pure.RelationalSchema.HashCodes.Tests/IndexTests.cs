@@ -10,10 +10,8 @@ using Pure.RelationalSchema.Abstractions.Column;
 using Pure.RelationalSchema.ColumnType;
 using String = Pure.Primitives.String.String;
 
-using Column = Column.Column;
-using Index = Index.Index;
-
 namespace Pure.RelationalSchema.HashCodes.Tests;
+
 public sealed record IndexTests
 {
     [Fact]
@@ -119,9 +117,7 @@ public sealed record IndexTests
         );
 
         Assert.Equal(
-            SHA256.HashData(
-                [.. typePrefix, .. uniquenessHash, .. columnsHash]
-            ),
+            SHA256.HashData([.. typePrefix, .. uniquenessHash, .. columnsHash]),
             new IndexHash(new Index(uniqueness, columns))
         );
     }

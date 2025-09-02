@@ -11,11 +11,8 @@ using Pure.RelationalSchema.Abstractions.Index;
 using Pure.RelationalSchema.ColumnType;
 using String = Pure.Primitives.String.String;
 
-using Column = Column.Column;
-using Index = Index.Index;
-using Table = Table.Table;
-
 namespace Pure.RelationalSchema.HashCodes.Tests;
+
 public sealed record TableHashTests
 {
     [Fact]
@@ -67,10 +64,7 @@ public sealed record TableHashTests
         );
 
         using IEnumerator<byte> expectedHash = SHA256
-            .HashData(
-                [.. typePrefix
-, .. nameHash, .. columnsHash, .. indexesHash]
-            )
+            .HashData([.. typePrefix, .. nameHash, .. columnsHash, .. indexesHash])
             .AsEnumerable()
             .GetEnumerator();
 
@@ -140,10 +134,7 @@ public sealed record TableHashTests
         );
 
         Assert.Equal(
-            SHA256.HashData(
-                [.. typePrefix
-, .. nameHash, .. columnsHash, .. indexesHash]
-            ),
+            SHA256.HashData([.. typePrefix, .. nameHash, .. columnsHash, .. indexesHash]),
             new TableHash(new Table(name, columns, indexes))
         );
     }

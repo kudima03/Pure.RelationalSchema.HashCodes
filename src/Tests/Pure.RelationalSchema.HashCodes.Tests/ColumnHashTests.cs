@@ -8,9 +8,8 @@ using Pure.Primitives.String;
 using Pure.RelationalSchema.Abstractions.ColumnType;
 using Pure.RelationalSchema.ColumnType;
 
-using Column = Column.Column;
-
 namespace Pure.RelationalSchema.HashCodes.Tests;
+
 public sealed record ColumnHashTests
 {
     [Fact]

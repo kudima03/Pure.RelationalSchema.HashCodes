@@ -9,12 +9,8 @@ using Pure.RelationalSchema.Abstractions.Table;
 using Pure.RelationalSchema.ColumnType;
 using String = Pure.Primitives.String.String;
 
-using Column = Column.Column;
-using ForeignKey = ForeignKey.ForeignKey;
-using Index = Index.Index;
-using Table = Table.Table;
-
 namespace Pure.RelationalSchema.HashCodes.Tests;
+
 public sealed record ForeignKeyHashTests
 {
     [Fact]
@@ -69,13 +65,13 @@ public sealed record ForeignKeyHashTests
         using IEnumerator<byte> expectedHash = SHA256
             .HashData(
                 [
-                    .. typePrefix
-,
+                    .. typePrefix,
                     .. new TableHash(referencingTable),
                     .. new ColumnHash(referencingTable.Columns.First()),
                     .. new TableHash(referencedTable),
                     .. new ColumnHash(referencedTable.Columns.First()),
-                ])
+                ]
+            )
             .AsEnumerable()
             .GetEnumerator();
 
@@ -155,13 +151,13 @@ public sealed record ForeignKeyHashTests
         Assert.Equal(
             SHA256.HashData(
                 [
-                    .. typePrefix
-,
+                    .. typePrefix,
                     .. new TableHash(referencingTable),
                     .. new ColumnHash(referencingTable.Columns.First()),
                     .. new TableHash(referencedTable),
                     .. new ColumnHash(referencedTable.Columns.First()),
-                ]),
+                ]
+            ),
             new ForeignKeyHash(
                 new ForeignKey(
                     referencingTable,

@@ -14,13 +14,8 @@ using Pure.RelationalSchema.Abstractions.Table;
 using Pure.RelationalSchema.ColumnType;
 using String = Pure.Primitives.String.String;
 
-using Column = Column.Column;
-using ForeignKey = ForeignKey.ForeignKey;
-using Index = Index.Index;
-using Schema = Schema.Schema;
-using Table = Table.Table;
-
 namespace Pure.RelationalSchema.HashCodes.Tests;
+
 public sealed record SchemaHashTests
 {
     [Fact]
@@ -92,13 +87,12 @@ public sealed record SchemaHashTests
         using IEnumerator<byte> expectedHash = SHA256
             .HashData(
                 [
-                    .. typePrefix
-,
+                    .. typePrefix,
                     .. new DeterminedHash(name),
                     .. new AggregatedHash(tables.Select(x => new TableHash(x))),
-                    .. new AggregatedHash(foreignKeys.Select(x => new ForeignKeyHash(x)))
-,
-                ])
+                    .. new AggregatedHash(foreignKeys.Select(x => new ForeignKeyHash(x))),
+                ]
+            )
             .AsEnumerable()
             .GetEnumerator();
 
@@ -188,13 +182,12 @@ public sealed record SchemaHashTests
         Assert.Equal(
             SHA256.HashData(
                 [
-                    .. typePrefix
-,
+                    .. typePrefix,
                     .. new DeterminedHash(name),
                     .. new AggregatedHash(tables.Select(x => new TableHash(x))),
-                    .. new AggregatedHash(foreignKeys.Select(x => new ForeignKeyHash(x)))
-,
-                ]),
+                    .. new AggregatedHash(foreignKeys.Select(x => new ForeignKeyHash(x))),
+                ]
+            ),
             new SchemaHash(new Schema(name, tables, foreignKeys))
         );
     }
