@@ -1,15 +1,20 @@
-using System.Collections;
-using System.Security.Cryptography;
-using Pure.Primitives.Bool;
+﻿using Pure.Primitives.Bool;
 using Pure.RelationalSchema.Abstractions.Column;
 using Pure.RelationalSchema.Abstractions.ForeignKey;
 using Pure.RelationalSchema.Abstractions.Index;
 using Pure.RelationalSchema.Abstractions.Table;
 using Pure.RelationalSchema.ColumnType;
 using Pure.RelationalSchema.Random;
+using System.Collections;
+using System.Security.Cryptography;
 using String = Pure.Primitives.String.String;
 
 namespace Pure.RelationalSchema.HashCodes.Tests;
+
+using Column = Column.Column;
+using ForeignKey = ForeignKey.ForeignKey;
+using Index = Index.Index;
+using Table = Table.Table;
 
 public sealed record ForeignKeyHashTests
 {
@@ -40,13 +45,12 @@ public sealed record ForeignKeyHashTests
 
         using IEnumerator<byte> expectedHash = SHA256
             .HashData(
-                [
-                    .. _typePrefix,
-                    .. new TableHash(randomForeignKey.ReferencingTable),
-                    .. new ColumnHash(randomForeignKey.ReferencingColumn),
-                    .. new TableHash(randomForeignKey.ReferencedTable),
-                    .. new ColumnHash(randomForeignKey.ReferencedColumn),
-                ]
+                _typePrefix
+                    .Concat(new TableHash(randomForeignKey.ReferencingTable))
+                    .Concat(new ColumnHash(randomForeignKey.ReferencingColumn))
+                    .Concat(new TableHash(randomForeignKey.ReferencedTable))
+                    .Concat(new ColumnHash(randomForeignKey.ReferencedColumn))
+                    .ToArray()
             )
             .AsEnumerable()
             .GetEnumerator();
@@ -57,7 +61,7 @@ public sealed record ForeignKeyHashTests
 
         foreach (object item in actualHash)
         {
-            _ = expectedHash.MoveNext();
+            expectedHash.MoveNext();
             if ((byte)item != expectedHash.Current)
             {
                 equal = false;
@@ -74,13 +78,12 @@ public sealed record ForeignKeyHashTests
         IForeignKey randomForeignKey = new RandomForeignKey();
 
         IEnumerable<byte> expectedHash = SHA256.HashData(
-            [
-                .. _typePrefix,
-                .. new TableHash(randomForeignKey.ReferencingTable),
-                .. new ColumnHash(randomForeignKey.ReferencingColumn),
-                .. new TableHash(randomForeignKey.ReferencedTable),
-                .. new ColumnHash(randomForeignKey.ReferencedColumn),
-            ]
+            _typePrefix
+                .Concat(new TableHash(randomForeignKey.ReferencingTable))
+                .Concat(new ColumnHash(randomForeignKey.ReferencingColumn))
+                .Concat(new TableHash(randomForeignKey.ReferencedTable))
+                .Concat(new ColumnHash(randomForeignKey.ReferencedColumn))
+                .ToArray()
         );
 
         Assert.Equal(expectedHash, new ForeignKeyHash(randomForeignKey));
@@ -131,7 +134,7 @@ public sealed record ForeignKeyHashTests
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
-        _ = Assert.Throws<NotSupportedException>(() =>
+        Assert.Throws<NotSupportedException>(() =>
             new ForeignKeyHash(new RandomForeignKey()).GetHashCode()
         );
     }
@@ -139,7 +142,7 @@ public sealed record ForeignKeyHashTests
     [Fact]
     public void ThrowsExceptionOnToString()
     {
-        _ = Assert.Throws<NotSupportedException>(() =>
+        Assert.Throws<NotSupportedException>(() =>
             new ForeignKeyHash(new RandomForeignKey()).ToString()
         );
     }
