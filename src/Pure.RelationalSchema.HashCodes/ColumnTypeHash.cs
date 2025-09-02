@@ -1,6 +1,6 @@
-﻿using Pure.HashCodes;
-using Pure.RelationalSchema.Abstractions.ColumnType;
 using System.Collections;
+using Pure.HashCodes;
+using Pure.RelationalSchema.Abstractions.ColumnType;
 
 namespace Pure.RelationalSchema.HashCodes;
 

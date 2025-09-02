@@ -1,8 +1,8 @@
-﻿using Pure.HashCodes;
-using Pure.RelationalSchema.Abstractions.ColumnType;
-using Pure.RelationalSchema.Random;
 using System.Collections;
 using System.Security.Cryptography;
+using Pure.HashCodes;
+using Pure.RelationalSchema.Abstractions.ColumnType;
+using Pure.RelationalSchema.Random;
 
 namespace Pure.RelationalSchema.HashCodes.Tests;
 
@@ -34,7 +34,7 @@ public sealed record ColumnTypeHashTests
         IColumnType randomColumnType = new RandomColumnType();
 
         using IEnumerator<byte> expectedHash = SHA256
-            .HashData(_typePrefix.Concat(new DeterminedHash(randomColumnType.Name)).ToArray())
+            .HashData([.. _typePrefix, .. new DeterminedHash(randomColumnType.Name)])
             .AsEnumerable()
             .GetEnumerator();
 
@@ -44,7 +44,7 @@ public sealed record ColumnTypeHashTests
 
         foreach (object item in actualHash)
         {
-            expectedHash.MoveNext();
+            _ = expectedHash.MoveNext();
             if ((byte)item != expectedHash.Current)
             {
                 equal = false;
@@ -61,7 +61,7 @@ public sealed record ColumnTypeHashTests
         IColumnType columnType = new RandomColumnType();
 
         IEnumerable<byte> expectedHash = SHA256.HashData(
-            _typePrefix.Concat(new DeterminedHash(columnType.Name)).ToArray()
+            [.. _typePrefix, .. new DeterminedHash(columnType.Name)]
         );
 
         Assert.Equal(expectedHash, new ColumnTypeHash(columnType));
@@ -70,7 +70,7 @@ public sealed record ColumnTypeHashTests
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
-        Assert.Throws<NotSupportedException>(() =>
+        _ = Assert.Throws<NotSupportedException>(() =>
             new ColumnTypeHash(new RandomColumnType()).GetHashCode()
         );
     }
@@ -78,7 +78,7 @@ public sealed record ColumnTypeHashTests
     [Fact]
     public void ThrowsExceptionOnToString()
     {
-        Assert.Throws<NotSupportedException>(() =>
+        _ = Assert.Throws<NotSupportedException>(() =>
             new ColumnTypeHash(new RandomColumnType()).ToString()
         );
     }
