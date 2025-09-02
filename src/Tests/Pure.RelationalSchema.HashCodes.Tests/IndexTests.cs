@@ -1,12 +1,12 @@
-﻿using Pure.HashCodes;
+using System.Collections;
+using System.Security.Cryptography;
+using Pure.HashCodes;
 using Pure.Primitives.Abstractions.Bool;
 using Pure.Primitives.Bool;
 using Pure.RelationalSchema.Abstractions.Column;
 using Pure.RelationalSchema.Abstractions.Index;
 using Pure.RelationalSchema.ColumnType;
 using Pure.RelationalSchema.Random;
-using System.Collections;
-using System.Security.Cryptography;
 using String = Pure.Primitives.String.String;
 
 namespace Pure.RelationalSchema.HashCodes.Tests;
@@ -43,10 +43,13 @@ public sealed record IndexTests
 
         using IEnumerator<byte> expectedHash = SHA256
             .HashData(
-                _typePrefix
-                    .Concat(new DeterminedHash(randomIndex.IsUnique))
-                    .Concat(new AggregatedHash(randomIndex.Columns.Select(x => new ColumnHash(x))))
-                    .ToArray()
+                [
+                    .. _typePrefix,
+                    .. new DeterminedHash(randomIndex.IsUnique),
+                    .. new AggregatedHash(
+                        randomIndex.Columns.Select(x => new ColumnHash(x))
+                    ),
+                ]
             )
             .AsEnumerable()
             .GetEnumerator();
@@ -57,7 +60,7 @@ public sealed record IndexTests
 
         foreach (object item in actualHash)
         {
-            expectedHash.MoveNext();
+            _ = expectedHash.MoveNext();
             if ((byte)item != expectedHash.Current)
             {
                 equal = false;
@@ -74,10 +77,11 @@ public sealed record IndexTests
         IIndex randomIndex = new RandomIndex();
 
         IEnumerable<byte> expectedHash = SHA256.HashData(
-            _typePrefix
-                .Concat(new DeterminedHash(randomIndex.IsUnique))
-                .Concat(new AggregatedHash(randomIndex.Columns.Select(x => new ColumnHash(x))))
-                .ToArray()
+            [
+                .. _typePrefix,
+                .. new DeterminedHash(randomIndex.IsUnique),
+                .. new AggregatedHash(randomIndex.Columns.Select(x => new ColumnHash(x))),
+            ]
         );
 
         Assert.Equal(expectedHash, new IndexHash(randomIndex));
@@ -122,12 +126,16 @@ public sealed record IndexTests
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
-        Assert.Throws<NotSupportedException>(() => new IndexHash(new RandomIndex()).GetHashCode());
+        _ = Assert.Throws<NotSupportedException>(() =>
+            new IndexHash(new RandomIndex()).GetHashCode()
+        );
     }
 
     [Fact]
     public void ThrowsExceptionOnToString()
     {
-        Assert.Throws<NotSupportedException>(() => new IndexHash(new RandomIndex()).ToString());
+        _ = Assert.Throws<NotSupportedException>(() =>
+            new IndexHash(new RandomIndex()).ToString()
+        );
     }
 }

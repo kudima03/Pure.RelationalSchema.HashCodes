@@ -1,8 +1,8 @@
-﻿using Pure.HashCodes;
-using Pure.RelationalSchema.Abstractions.Column;
-using Pure.RelationalSchema.Random;
 using System.Collections;
 using System.Security.Cryptography;
+using Pure.HashCodes;
+using Pure.RelationalSchema.Abstractions.Column;
+using Pure.RelationalSchema.Random;
 
 namespace Pure.RelationalSchema.HashCodes.Tests;
 
@@ -35,10 +35,11 @@ public sealed record ColumnHashTests
 
         using IEnumerator<byte> expectedHash = SHA256
             .HashData(
-                _typePrefix
-                    .Concat(new DeterminedHash(randomColumn.Name))
-                    .Concat(new ColumnTypeHash(randomColumn.Type))
-                    .ToArray()
+                [
+                    .. _typePrefix,
+                    .. new DeterminedHash(randomColumn.Name),
+                    .. new ColumnTypeHash(randomColumn.Type),
+                ]
             )
             .AsEnumerable()
             .GetEnumerator();
@@ -49,7 +50,7 @@ public sealed record ColumnHashTests
 
         foreach (object item in actualHash)
         {
-            expectedHash.MoveNext();
+            _ = expectedHash.MoveNext();
             if ((byte)item != expectedHash.Current)
             {
                 equal = false;
@@ -68,7 +69,7 @@ public sealed record ColumnHashTests
         IDeterminedHash columnTypeHash = new ColumnTypeHash(randomColumn.Type);
 
         Assert.Equal(
-            SHA256.HashData(_typePrefix.Concat(nameHash).Concat(columnTypeHash).ToArray()),
+            SHA256.HashData([.. _typePrefix, .. nameHash, .. columnTypeHash]),
             new ColumnHash(randomColumn)
         );
     }
@@ -76,7 +77,7 @@ public sealed record ColumnHashTests
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
-        Assert.Throws<NotSupportedException>(() =>
+        _ = Assert.Throws<NotSupportedException>(() =>
             new ColumnHash(new RandomColumn()).GetHashCode()
         );
     }
@@ -84,6 +85,8 @@ public sealed record ColumnHashTests
     [Fact]
     public void ThrowsExceptionOnToString()
     {
-        Assert.Throws<NotSupportedException>(() => new ColumnHash(new RandomColumn()).ToString());
+        _ = Assert.Throws<NotSupportedException>(() =>
+            new ColumnHash(new RandomColumn()).ToString()
+        );
     }
 }

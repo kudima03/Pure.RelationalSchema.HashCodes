@@ -1,4 +1,6 @@
-﻿using Pure.HashCodes;
+using System.Collections;
+using System.Security.Cryptography;
+using Pure.HashCodes;
 using Pure.Primitives.Abstractions.String;
 using Pure.Primitives.Bool;
 using Pure.Primitives.Number;
@@ -7,8 +9,6 @@ using Pure.Primitives.String;
 using Pure.RelationalSchema.Abstractions.Column;
 using Pure.RelationalSchema.Abstractions.Index;
 using Pure.RelationalSchema.ColumnType;
-using System.Collections;
-using System.Security.Cryptography;
 using String = Pure.Primitives.String.String;
 
 namespace Pure.RelationalSchema.HashCodes.Tests;
@@ -60,11 +60,15 @@ public sealed record TableHashTests
         ];
 
         IDeterminedHash nameHash = new DeterminedHash(name);
-        IDeterminedHash columnsHash = new AggregatedHash(columns.Select(x => new ColumnHash(x)));
-        IDeterminedHash indexesHash = new AggregatedHash(indexes.Select(x => new IndexHash(x)));
+        IDeterminedHash columnsHash = new AggregatedHash(
+            columns.Select(x => new ColumnHash(x))
+        );
+        IDeterminedHash indexesHash = new AggregatedHash(
+            indexes.Select(x => new IndexHash(x))
+        );
 
         using IEnumerator<byte> expectedHash = SHA256
-            .HashData(typePrefix.Concat(nameHash).Concat(columnsHash).Concat(indexesHash).ToArray())
+            .HashData([.. typePrefix, .. nameHash, .. columnsHash, .. indexesHash])
             .AsEnumerable()
             .GetEnumerator();
 
@@ -74,7 +78,7 @@ public sealed record TableHashTests
 
         foreach (object item in actualHash)
         {
-            expectedHash.MoveNext();
+            _ = expectedHash.MoveNext();
             if ((byte)item != expectedHash.Current)
             {
                 equal = false;
@@ -126,13 +130,15 @@ public sealed record TableHashTests
         ];
 
         IDeterminedHash nameHash = new DeterminedHash(name);
-        IDeterminedHash columnsHash = new AggregatedHash(columns.Select(x => new ColumnHash(x)));
-        IDeterminedHash indexesHash = new AggregatedHash(indexes.Select(x => new IndexHash(x)));
+        IDeterminedHash columnsHash = new AggregatedHash(
+            columns.Select(x => new ColumnHash(x))
+        );
+        IDeterminedHash indexesHash = new AggregatedHash(
+            indexes.Select(x => new IndexHash(x))
+        );
 
         Assert.Equal(
-            SHA256.HashData(
-                typePrefix.Concat(nameHash).Concat(columnsHash).Concat(indexesHash).ToArray()
-            ),
+            SHA256.HashData([.. typePrefix, .. nameHash, .. columnsHash, .. indexesHash]),
             new TableHash(new Table(name, columns, indexes))
         );
     }
@@ -215,14 +221,16 @@ public sealed record TableHashTests
 
         Assert.Equal(
             "BEF6FF6D2D6180367A589DDF981080F3EAC06FBE2221321CAAEDDEF87B401245",
-            Convert.ToHexString(new TableHash(new Table(name, columns, indexes)).ToArray())
+            Convert.ToHexString(
+                new TableHash(new Table(name, columns, indexes)).ToArray()
+            )
         );
     }
 
     [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
-        Assert.Throws<NotSupportedException>(() =>
+        _ = Assert.Throws<NotSupportedException>(() =>
             new TableHash(new Table(new EmptyString(), [], [])).GetHashCode()
         );
     }
@@ -230,7 +238,7 @@ public sealed record TableHashTests
     [Fact]
     public void ThrowsExceptionOnToString()
     {
-        Assert.Throws<NotSupportedException>(() =>
+        _ = Assert.Throws<NotSupportedException>(() =>
             new TableHash(new Table(new EmptyString(), [], [])).ToString()
         );
     }
