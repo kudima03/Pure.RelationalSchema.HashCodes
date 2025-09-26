@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Security.Cryptography;
+using Pure.HashCodes;
 using Pure.Primitives.Bool;
 using Pure.RelationalSchema.Abstractions.Column;
 using Pure.RelationalSchema.Abstractions.ForeignKey;
@@ -48,9 +49,13 @@ public sealed record ForeignKeyHashTests
                 [
                     .. _typePrefix,
                     .. new TableHash(randomForeignKey.ReferencingTable),
-                    .. new ColumnHash(randomForeignKey.ReferencingColumn),
+                    .. new AggregatedHash(
+                        randomForeignKey.ReferencingColumns.Select(x => new ColumnHash(x))
+                    ),
                     .. new TableHash(randomForeignKey.ReferencedTable),
-                    .. new ColumnHash(randomForeignKey.ReferencedColumn),
+                    .. new AggregatedHash(
+                        randomForeignKey.ReferencedColumns.Select(x => new ColumnHash(x))
+                    ),
                 ]
             )
             .AsEnumerable()
@@ -82,9 +87,13 @@ public sealed record ForeignKeyHashTests
             [
                 .. _typePrefix,
                 .. new TableHash(randomForeignKey.ReferencingTable),
-                .. new ColumnHash(randomForeignKey.ReferencingColumn),
+                .. new AggregatedHash(
+                    randomForeignKey.ReferencingColumns.Select(x => new ColumnHash(x))
+                ),
                 .. new TableHash(randomForeignKey.ReferencedTable),
-                .. new ColumnHash(randomForeignKey.ReferencedColumn),
+                .. new AggregatedHash(
+                    randomForeignKey.ReferencedColumns.Select(x => new ColumnHash(x))
+                ),
             ]
         );
 
@@ -122,9 +131,9 @@ public sealed record ForeignKeyHashTests
 
         IForeignKey foreignKey = new ForeignKey(
             referencingTable,
-            referencingTable.Columns.First(),
+            [referencingTable.Columns.First()],
             referencedTable,
-            referencedTable.Columns.First()
+            [referencedTable.Columns.First()]
         );
 
         Assert.Equal(

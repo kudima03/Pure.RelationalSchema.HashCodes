@@ -38,9 +38,17 @@ public sealed record ForeignKeyHash : IDeterminedHash
         return new DeterminedHash(
             TypePrefix
                 .Concat(new TableHash(_foreignKey.ReferencingTable))
-                .Concat(new ColumnHash(_foreignKey.ReferencingColumn))
+                .Concat(
+                    new AggregatedHash(
+                        _foreignKey.ReferencingColumns.Select(x => new ColumnHash(x))
+                    )
+                )
                 .Concat(new TableHash(_foreignKey.ReferencedTable))
-                .Concat(new ColumnHash(_foreignKey.ReferencedColumn))
+                .Concat(
+                    new AggregatedHash(
+                        _foreignKey.ReferencedColumns.Select(x => new ColumnHash(x))
+                    )
+                )
         ).GetEnumerator();
     }
 
