@@ -167,15 +167,15 @@ public sealed record SchemaHashTests
         [
             new ForeignKey(
                 tables.First(),
-                tables.First().Columns.First(),
+                [tables.First().Columns.First()],
                 tables.Skip(1).First(),
-                tables.Skip(1).First().Columns.First()
+                [tables.Skip(1).First().Columns.First()]
             ),
             new ForeignKey(
                 tables.Skip(2).First(),
-                tables.Skip(2).First().Columns.First(),
+                [tables.Skip(2).First().Columns.First()],
                 tables.Skip(3).First(),
-                tables.Skip(3).First().Columns.First()
+                [tables.Skip(3).First().Columns.First()]
             ),
         ];
 
