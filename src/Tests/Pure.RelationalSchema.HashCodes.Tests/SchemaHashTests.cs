@@ -180,7 +180,7 @@ public sealed record SchemaHashTests
         ];
 
         Assert.Equal(
-            "4E3A969A5633DAAA88ED5BD30FFFA35C0679C7C2B0C38CD52567445C4433186B",
+            "CA2280C217ACD33B5FBD7E32CE7B9BCEA3FAE6356BFADFB3D6FCCFBDF9AEDC2C",
             Convert.ToHexString(
                 new SchemaHash(new Schema(name, tables, foreignKeys)).ToArray()
             )

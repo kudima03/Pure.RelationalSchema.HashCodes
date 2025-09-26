@@ -137,7 +137,49 @@ public sealed record ForeignKeyHashTests
         );
 
         Assert.Equal(
-            "F43B8C97B9146B1392649302110A95D821EC085461CD463EE67CE9F7F65C5F1E",
+            "92683CB2463C911400D18121CBFBE36AF89C4B67926228E308BF78BC1590438D",
+            Convert.ToHexString(new ForeignKeyHash(foreignKey).ToArray())
+        );
+    }
+
+    [Fact]
+    public void DeterminedOnEmptyColumns()
+    {
+        IReadOnlyCollection<IColumn> columns =
+        [
+            new Column(new String("asd"), new DateColumnType()),
+            new Column(new String("qwe"), new TimeColumnType()),
+            new Column(new String("asd"), new UShortColumnType()),
+            new Column(new String("zxc"), new LongColumnType()),
+            new Column(new String("tyu"), new IntColumnType()),
+        ];
+
+        IReadOnlyCollection<IIndex> indexes =
+        [
+            new Index(new True(), columns.Take(2)),
+            new Index(new True(), columns.Skip(2).Take(2)),
+        ];
+
+        ITable referencingTable = new Table(
+            new String("Sample name"),
+            columns.Take(2),
+            indexes.Take(1)
+        );
+        ITable referencedTable = new Table(
+            new String("Sample name1"),
+            columns.Skip(2).Take(2),
+            indexes.Skip(1).Take(1)
+        );
+
+        IForeignKey foreignKey = new ForeignKey(
+            referencingTable,
+            [],
+            referencedTable,
+            []
+        );
+
+        Assert.Equal(
+            "54216FBD7A1DA51D3DA696527ED790ADB3B0A229BBEEE7DCDC8652E40F459879",
             Convert.ToHexString(new ForeignKeyHash(foreignKey).ToArray())
         );
     }
