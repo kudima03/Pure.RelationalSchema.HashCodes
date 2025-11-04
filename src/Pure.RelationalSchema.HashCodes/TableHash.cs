@@ -1,5 +1,6 @@
 using System.Collections;
 using Pure.HashCodes;
+using Pure.HashCodes.Abstractions;
 using Pure.RelationalSchema.Abstractions.Table;
 
 namespace Pure.RelationalSchema.HashCodes;
@@ -39,12 +40,12 @@ public sealed record TableHash : IDeterminedHash
             TypePrefix
                 .Concat(new DeterminedHash(_table.Name))
                 .Concat(
-                    new AggregatedHash(
+                    new DeterminedHash(
                         _table.Columns.Select(column => new ColumnHash(column))
                     )
                 )
                 .Concat(
-                    new AggregatedHash(
+                    new DeterminedHash(
                         _table.Indexes.Select(index => new IndexHash(index))
                     )
                 )

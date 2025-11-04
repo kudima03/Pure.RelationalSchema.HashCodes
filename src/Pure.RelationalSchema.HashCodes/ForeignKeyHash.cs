@@ -1,5 +1,6 @@
 using System.Collections;
 using Pure.HashCodes;
+using Pure.HashCodes.Abstractions;
 using Pure.RelationalSchema.Abstractions.ForeignKey;
 
 namespace Pure.RelationalSchema.HashCodes;
@@ -39,13 +40,13 @@ public sealed record ForeignKeyHash : IDeterminedHash
             TypePrefix
                 .Concat(new TableHash(_foreignKey.ReferencingTable))
                 .Concat(
-                    new AggregatedHash(
+                    new DeterminedHash(
                         _foreignKey.ReferencingColumns.Select(x => new ColumnHash(x))
                     )
                 )
                 .Concat(new TableHash(_foreignKey.ReferencedTable))
                 .Concat(
-                    new AggregatedHash(
+                    new DeterminedHash(
                         _foreignKey.ReferencedColumns.Select(x => new ColumnHash(x))
                     )
                 )

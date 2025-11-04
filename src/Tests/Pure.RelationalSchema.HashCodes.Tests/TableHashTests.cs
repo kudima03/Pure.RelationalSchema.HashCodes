@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Security.Cryptography;
 using Pure.HashCodes;
+using Pure.HashCodes.Abstractions;
 using Pure.Primitives.Abstractions.String;
 using Pure.Primitives.Bool;
 using Pure.Primitives.Number;
@@ -60,10 +61,10 @@ public sealed record TableHashTests
         ];
 
         IDeterminedHash nameHash = new DeterminedHash(name);
-        IDeterminedHash columnsHash = new AggregatedHash(
+        IDeterminedHash columnsHash = new DeterminedHash(
             columns.Select(x => new ColumnHash(x))
         );
-        IDeterminedHash indexesHash = new AggregatedHash(
+        IDeterminedHash indexesHash = new DeterminedHash(
             indexes.Select(x => new IndexHash(x))
         );
 
@@ -130,10 +131,10 @@ public sealed record TableHashTests
         ];
 
         IDeterminedHash nameHash = new DeterminedHash(name);
-        IDeterminedHash columnsHash = new AggregatedHash(
+        IDeterminedHash columnsHash = new DeterminedHash(
             columns.Select(x => new ColumnHash(x))
         );
-        IDeterminedHash indexesHash = new AggregatedHash(
+        IDeterminedHash indexesHash = new DeterminedHash(
             indexes.Select(x => new IndexHash(x))
         );
 
