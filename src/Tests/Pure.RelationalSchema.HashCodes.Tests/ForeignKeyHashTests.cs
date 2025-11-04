@@ -49,11 +49,11 @@ public sealed record ForeignKeyHashTests
                 [
                     .. _typePrefix,
                     .. new TableHash(randomForeignKey.ReferencingTable),
-                    .. new AggregatedHash(
+                    .. new DeterminedHash(
                         randomForeignKey.ReferencingColumns.Select(x => new ColumnHash(x))
                     ),
                     .. new TableHash(randomForeignKey.ReferencedTable),
-                    .. new AggregatedHash(
+                    .. new DeterminedHash(
                         randomForeignKey.ReferencedColumns.Select(x => new ColumnHash(x))
                     ),
                 ]
@@ -87,11 +87,11 @@ public sealed record ForeignKeyHashTests
             [
                 .. _typePrefix,
                 .. new TableHash(randomForeignKey.ReferencingTable),
-                .. new AggregatedHash(
+                .. new DeterminedHash(
                     randomForeignKey.ReferencingColumns.Select(x => new ColumnHash(x))
                 ),
                 .. new TableHash(randomForeignKey.ReferencedTable),
-                .. new AggregatedHash(
+                .. new DeterminedHash(
                     randomForeignKey.ReferencedColumns.Select(x => new ColumnHash(x))
                 ),
             ]

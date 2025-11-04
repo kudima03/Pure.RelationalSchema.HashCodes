@@ -52,10 +52,10 @@ public sealed record SchemaHashTests
                 [
                     .. _typePrefix,
                     .. new DeterminedHash(randomSchema.Name),
-                    .. new AggregatedHash(
+                    .. new DeterminedHash(
                         randomSchema.Tables.Select(x => new TableHash(x))
                     ),
-                    .. new AggregatedHash(
+                    .. new DeterminedHash(
                         randomSchema.ForeignKeys.Select(x => new ForeignKeyHash(x))
                     ),
                 ]
@@ -89,8 +89,8 @@ public sealed record SchemaHashTests
             [
                 .. _typePrefix,
                 .. new DeterminedHash(randomSchema.Name),
-                .. new AggregatedHash(randomSchema.Tables.Select(x => new TableHash(x))),
-                .. new AggregatedHash(
+                .. new DeterminedHash(randomSchema.Tables.Select(x => new TableHash(x))),
+                .. new DeterminedHash(
                     randomSchema.ForeignKeys.Select(x => new ForeignKeyHash(x))
                 ),
             ]

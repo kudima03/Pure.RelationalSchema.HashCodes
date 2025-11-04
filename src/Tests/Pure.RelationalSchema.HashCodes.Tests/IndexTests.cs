@@ -46,7 +46,7 @@ public sealed record IndexTests
                 [
                     .. _typePrefix,
                     .. new DeterminedHash(randomIndex.IsUnique),
-                    .. new AggregatedHash(
+                    .. new DeterminedHash(
                         randomIndex.Columns.Select(x => new ColumnHash(x))
                     ),
                 ]
@@ -80,7 +80,7 @@ public sealed record IndexTests
             [
                 .. _typePrefix,
                 .. new DeterminedHash(randomIndex.IsUnique),
-                .. new AggregatedHash(randomIndex.Columns.Select(x => new ColumnHash(x))),
+                .. new DeterminedHash(randomIndex.Columns.Select(x => new ColumnHash(x))),
             ]
         );
 
