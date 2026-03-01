@@ -34,6 +34,7 @@ public sealed record IndexHash : IDeterminedHash
     {
         _index = index ?? throw new ArgumentNullException(nameof(index));
     }
+
     public IndexHash(IDeterminedHash hash)
     {
         _hash = hash ?? throw new ArgumentNullException(nameof(hash));

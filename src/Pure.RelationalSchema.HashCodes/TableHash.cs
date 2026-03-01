@@ -34,6 +34,7 @@ public sealed record TableHash : IDeterminedHash
     {
         _table = table ?? throw new ArgumentNullException(nameof(table));
     }
+
     public TableHash(IDeterminedHash hash)
     {
         _hash = hash ?? throw new ArgumentNullException(nameof(hash));

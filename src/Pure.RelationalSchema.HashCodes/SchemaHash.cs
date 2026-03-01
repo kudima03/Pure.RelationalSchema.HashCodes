@@ -34,6 +34,7 @@ public sealed record SchemaHash : IDeterminedHash
     {
         _schema = schema ?? throw new ArgumentNullException(nameof(schema));
     }
+
     public SchemaHash(IDeterminedHash hash)
     {
         _hash = hash ?? throw new ArgumentNullException(nameof(hash));
