@@ -27,18 +27,25 @@ public sealed record SchemaHash : IDeterminedHash
         110,
     ];
 
-    private readonly ISchema _schema;
+    private readonly ISchema? _schema;
+    private readonly IDeterminedHash? _hash;
 
     public SchemaHash(ISchema schema)
     {
-        _schema = schema;
+        _schema = schema ?? throw new ArgumentNullException(nameof(schema));
+    }
+    public SchemaHash(IDeterminedHash hash)
+    {
+        _hash = hash ?? throw new ArgumentNullException(nameof(hash));
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return new DeterminedHash(
+        return _hash is not null
+            ? _hash.GetEnumerator()
+            : new DeterminedHash(
             TypePrefix
-                .Concat(new DeterminedHash(_schema.Name))
+                .Concat(new DeterminedHash(_schema!.Name))
                 .Concat(
                     new DeterminedHash(
                         _schema.Tables.Select(column => new TableHash(column))

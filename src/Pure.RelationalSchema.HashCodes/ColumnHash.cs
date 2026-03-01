@@ -27,18 +27,26 @@ public sealed record ColumnHash : IDeterminedHash
         69,
     ];
 
-    private readonly IColumn _column;
+    private readonly IColumn? _column;
+    private readonly IDeterminedHash? _hash;
 
     public ColumnHash(IColumn column)
     {
-        _column = column;
+        _column = column ?? throw new ArgumentNullException(nameof(column));
+    }
+
+    public ColumnHash(IDeterminedHash hash)
+    {
+        _hash = hash ?? throw new ArgumentNullException(nameof(hash));
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return new DeterminedHash(
+        return _hash is not null
+            ? _hash.GetEnumerator()
+            : new DeterminedHash(
             TypePrefix
-                .Concat(new DeterminedHash(_column.Name))
+                .Concat(new DeterminedHash(_column!.Name))
                 .Concat(new ColumnTypeHash(_column.Type))
         ).GetEnumerator();
     }
