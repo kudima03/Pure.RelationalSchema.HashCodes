@@ -27,18 +27,26 @@ public sealed record ForeignKeyHash : IDeterminedHash
         148,
     ];
 
-    private readonly IForeignKey _foreignKey;
+    private readonly IForeignKey? _foreignKey;
+    private readonly IDeterminedHash? _hash;
 
     public ForeignKeyHash(IForeignKey foreignKey)
     {
-        _foreignKey = foreignKey;
+        _foreignKey = foreignKey ?? throw new ArgumentNullException(nameof(foreignKey));
+    }
+
+    public ForeignKeyHash(IDeterminedHash hash)
+    {
+        _hash = hash ?? throw new ArgumentNullException(nameof(hash));
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return new DeterminedHash(
+        return _hash is not null
+            ? _hash.GetEnumerator()
+            : new DeterminedHash(
             TypePrefix
-                .Concat(new TableHash(_foreignKey.ReferencingTable))
+                .Concat(new TableHash(_foreignKey!.ReferencingTable))
                 .Concat(
                     new DeterminedHash(
                         _foreignKey.ReferencingColumns.Select(x => new ColumnHash(x))

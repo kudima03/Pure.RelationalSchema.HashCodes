@@ -27,18 +27,26 @@ public sealed record TableHash : IDeterminedHash
         5,
     ];
 
-    private readonly ITable _table;
+    private readonly ITable? _table;
+    private readonly IDeterminedHash? _hash;
 
     public TableHash(ITable table)
     {
-        _table = table;
+        _table = table ?? throw new ArgumentNullException(nameof(table));
+    }
+
+    public TableHash(IDeterminedHash hash)
+    {
+        _hash = hash ?? throw new ArgumentNullException(nameof(hash));
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return new DeterminedHash(
+        return _hash is not null
+            ? _hash.GetEnumerator()
+            : new DeterminedHash(
             TypePrefix
-                .Concat(new DeterminedHash(_table.Name))
+                .Concat(new DeterminedHash(_table!.Name))
                 .Concat(
                     new DeterminedHash(
                         _table.Columns.Select(column => new ColumnHash(column))

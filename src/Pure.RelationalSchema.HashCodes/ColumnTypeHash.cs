@@ -27,17 +27,25 @@ public sealed record ColumnTypeHash : IDeterminedHash
         135,
     ];
 
-    private readonly IColumnType _columnType;
+    private readonly IColumnType? _columnType;
+    private readonly IDeterminedHash? _hash;
 
     public ColumnTypeHash(IColumnType columnType)
     {
-        _columnType = columnType;
+        _columnType = columnType ?? throw new ArgumentNullException(nameof(columnType));
+    }
+
+    public ColumnTypeHash(IDeterminedHash hash)
+    {
+        _hash = hash ?? throw new ArgumentNullException(nameof(hash));
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return new DeterminedHash(
-            TypePrefix.Concat(new DeterminedHash(_columnType.Name))
+        return _hash is not null
+            ? _hash.GetEnumerator()
+            : new DeterminedHash(
+            TypePrefix.Concat(new DeterminedHash(_columnType!.Name))
         ).GetEnumerator();
     }
 

@@ -27,18 +27,26 @@ public sealed record IndexHash : IDeterminedHash
         244,
     ];
 
-    private readonly IIndex _index;
+    private readonly IIndex? _index;
+    private readonly IDeterminedHash? _hash;
 
     public IndexHash(IIndex index)
     {
-        _index = index;
+        _index = index ?? throw new ArgumentNullException(nameof(index));
+    }
+
+    public IndexHash(IDeterminedHash hash)
+    {
+        _hash = hash ?? throw new ArgumentNullException(nameof(hash));
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return new DeterminedHash(
+        return _hash is not null
+            ? _hash.GetEnumerator()
+            : new DeterminedHash(
             TypePrefix
-                .Concat(new DeterminedHash(_index.IsUnique))
+                .Concat(new DeterminedHash(_index!.IsUnique))
                 .Concat(
                     new DeterminedHash(
                         _index.Columns.Select(column => new ColumnHash(column))
