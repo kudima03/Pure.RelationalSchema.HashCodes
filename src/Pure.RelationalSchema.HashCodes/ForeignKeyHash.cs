@@ -1,7 +1,8 @@
 using System.Collections;
 using Pure.HashCodes;
 using Pure.HashCodes.Abstractions;
-using Pure.RelationalSchema.Abstractions.ForeignKey;
+using Pure.RelationalSchema.Abstractions.Column;
+using Pure.RelationalSchema.Abstractions.Table;
 
 namespace Pure.RelationalSchema.HashCodes;
 
@@ -32,12 +33,198 @@ public sealed record ForeignKeyHash : IDeterminedHash
     private readonly IDeterminedHash _referencedTableHash;
     private readonly IDeterminedHash _referencedColumnsHash;
 
-    public ForeignKeyHash(IForeignKey foreignKey)
+    public ForeignKeyHash(
+        ITable referencingTable,
+        IEnumerable<IColumn> referencingColumns,
+        ITable referencedTable,
+        IEnumerable<IColumn> referencedColumns)
         : this(
-            new TableHash(foreignKey.ReferencingTable),
-            new DeterminedHash(foreignKey.ReferencingColumns.Select(column => new ColumnHash(column.Name, column.Type))),
-            new TableHash(foreignKey.ReferencedTable),
-            new DeterminedHash(foreignKey.ReferencedColumns.Select(column => new ColumnHash(column.Name, column.Type)))
+            new TableHash(referencingTable.Name, referencingColumns, referencingTable.Indexes),
+            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c.Name, c.Type))),
+            new TableHash(referencedTable.Name, referencedColumns, referencedTable.Indexes),
+            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c.Name, c.Type)))
+        )
+    { }
+
+    public ForeignKeyHash(
+        IDeterminedHash referencingTableHash,
+        IEnumerable<IColumn> referencingColumns,
+        ITable referencedTable,
+        IEnumerable<IColumn> referencedColumns)
+        : this(
+            referencingTableHash,
+            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c.Name, c.Type))),
+            new TableHash(referencedTable.Name, referencedColumns, referencedTable.Indexes),
+            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c.Name, c.Type)))
+        )
+    { }
+
+    public ForeignKeyHash(
+        ITable referencingTable,
+        IDeterminedHash referencingColumnsHash,
+        ITable referencedTable,
+        IEnumerable<IColumn> referencedColumns)
+        : this(
+            new TableHash(referencingTable.Name, referencingColumnsHash, referencingTable.Indexes),
+            referencingColumnsHash,
+            new TableHash(referencedTable.Name, referencedColumns, referencedTable.Indexes),
+            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c.Name, c.Type)))
+        )
+    { }
+
+    public ForeignKeyHash(
+        ITable referencingTable,
+        IEnumerable<IColumn> referencingColumns,
+        IDeterminedHash referencedTableHash,
+        IEnumerable<IColumn> referencedColumns)
+        : this(
+            new TableHash(referencingTable.Name, referencingColumns, referencingTable.Indexes),
+            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c.Name, c.Type))),
+            referencedTableHash,
+            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c.Name, c.Type)))
+        )
+    { }
+
+    public ForeignKeyHash(
+        ITable referencingTable,
+        IEnumerable<IColumn> referencingColumns,
+        ITable referencedTable,
+        IDeterminedHash referencedColumnsHash)
+        : this(
+            new TableHash(referencingTable.Name, referencingColumns, referencingTable.Indexes),
+            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c.Name, c.Type))),
+            new TableHash(referencedTable.Name, referencedTable.Columns, referencedTable.Indexes),
+            referencedColumnsHash
+        )
+    { }
+
+    public ForeignKeyHash(
+        IDeterminedHash referencingTableHash,
+        IDeterminedHash referencingColumnsHash,
+        ITable referencedTable,
+        IEnumerable<IColumn> referencedColumns)
+        : this(
+            referencingTableHash,
+            referencingColumnsHash,
+            new TableHash(referencedTable.Name, referencedColumns, referencedTable.Indexes),
+            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c.Name, c.Type)))
+        )
+    { }
+
+    public ForeignKeyHash(
+        IDeterminedHash referencingTableHash,
+        IEnumerable<IColumn> referencingColumns,
+        IDeterminedHash referencedTableHash,
+        IEnumerable<IColumn> referencedColumns)
+        : this(
+            referencingTableHash,
+            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c.Name, c.Type))),
+            referencedTableHash,
+            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c.Name, c.Type)))
+        )
+    { }
+
+    public ForeignKeyHash(
+        IDeterminedHash referencingTableHash,
+        IEnumerable<IColumn> referencingColumns,
+        ITable referencedTable,
+        IDeterminedHash referencedColumnsHash)
+        : this(
+            referencingTableHash,
+            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c.Name, c.Type))),
+            new TableHash(referencedTable.Name, referencedTable.Columns, referencedTable.Indexes),
+            referencedColumnsHash
+        )
+    { }
+
+    public ForeignKeyHash(
+        ITable referencingTable,
+        IDeterminedHash referencingColumnsHash,
+        IDeterminedHash referencedTableHash,
+        IEnumerable<IColumn> referencedColumns)
+        : this(
+            new TableHash(referencingTable.Name, referencingColumnsHash, referencingTable.Indexes),
+            referencingColumnsHash,
+            referencedTableHash,
+            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c.Name, c.Type)))
+        )
+    { }
+
+    public ForeignKeyHash(
+        ITable referencingTable,
+        IDeterminedHash referencingColumnsHash,
+        ITable referencedTable,
+        IDeterminedHash referencedColumnsHash)
+        : this(
+            new TableHash(referencingTable.Name, referencingColumnsHash, referencingTable.Indexes),
+            referencingColumnsHash,
+            new TableHash(referencedTable.Name, referencedTable.Columns, referencedTable.Indexes),
+            referencedColumnsHash
+        )
+    { }
+
+    public ForeignKeyHash(
+        ITable referencingTable,
+        IEnumerable<IColumn> referencingColumns,
+        IDeterminedHash referencedTableHash,
+        IDeterminedHash referencedColumnsHash)
+        : this(
+            new TableHash(referencingTable.Name, referencingColumns, referencingTable.Indexes),
+            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c.Name, c.Type))),
+            referencedTableHash,
+            referencedColumnsHash
+        )
+    { }
+
+    public ForeignKeyHash(
+        IDeterminedHash referencingTableHash,
+        IDeterminedHash referencingColumnsHash,
+        IDeterminedHash referencedTableHash,
+        IEnumerable<IColumn> referencedColumns)
+        : this(
+            referencingTableHash,
+            referencingColumnsHash,
+            referencedTableHash,
+            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c.Name, c.Type)))
+        )
+    { }
+
+    public ForeignKeyHash(
+        IDeterminedHash referencingTableHash,
+        IDeterminedHash referencingColumnsHash,
+        ITable referencedTable,
+        IDeterminedHash referencedColumnsHash)
+        : this(
+            referencingTableHash,
+            referencingColumnsHash,
+            new TableHash(referencedTable.Name, referencedTable.Columns, referencedTable.Indexes),
+            referencedColumnsHash
+        )
+    { }
+
+    public ForeignKeyHash(
+        IDeterminedHash referencingTableHash,
+        IEnumerable<IColumn> referencingColumns,
+        IDeterminedHash referencedTableHash,
+        IDeterminedHash referencedColumnsHash)
+        : this(
+            referencingTableHash,
+            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c.Name, c.Type))),
+            referencedTableHash,
+            referencedColumnsHash
+        )
+    { }
+
+    public ForeignKeyHash(
+        ITable referencingTable,
+        IDeterminedHash referencingColumnsHash,
+        IDeterminedHash referencedTableHash,
+        IDeterminedHash referencedColumnsHash)
+        : this(
+            new TableHash(referencingTable.Name, referencingColumnsHash, referencingTable.Indexes),
+            referencingColumnsHash,
+            referencedTableHash,
+            referencedColumnsHash
         )
     { }
 
@@ -47,10 +234,10 @@ public sealed record ForeignKeyHash : IDeterminedHash
         IDeterminedHash referencedTableHash,
         IDeterminedHash referencedColumnsHash)
     {
-        _referencingTableHash = referencingTableHash;
-        _referencingColumnsHash = referencingColumnsHash;
-        _referencedTableHash = referencedTableHash;
-        _referencedColumnsHash = referencedColumnsHash;
+        _referencingTableHash = referencingTableHash ?? throw new ArgumentNullException(nameof(referencingTableHash));
+        _referencingColumnsHash = referencingColumnsHash ?? throw new ArgumentNullException(nameof(referencingColumnsHash));
+        _referencedTableHash = referencedTableHash ?? throw new ArgumentNullException(nameof(referencedTableHash));
+        _referencedColumnsHash = referencedColumnsHash ?? throw new ArgumentNullException(nameof(referencedColumnsHash));
     }
 
     public IEnumerator<byte> GetEnumerator()
