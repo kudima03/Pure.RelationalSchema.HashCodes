@@ -234,10 +234,10 @@ public sealed record ForeignKeyHash : IDeterminedHash
         IDeterminedHash referencedTableHash,
         IDeterminedHash referencedColumnsHash)
     {
-        _referencingTableHash = referencingTableHash ?? throw new ArgumentNullException(nameof(referencingTableHash));
-        _referencingColumnsHash = referencingColumnsHash ?? throw new ArgumentNullException(nameof(referencingColumnsHash));
-        _referencedTableHash = referencedTableHash ?? throw new ArgumentNullException(nameof(referencedTableHash));
-        _referencedColumnsHash = referencedColumnsHash ?? throw new ArgumentNullException(nameof(referencedColumnsHash));
+        _referencingTableHash = referencingTableHash;
+        _referencingColumnsHash = referencingColumnsHash;
+        _referencedTableHash = referencedTableHash;
+        _referencedColumnsHash = referencedColumnsHash;
     }
 
     public IEnumerator<byte> GetEnumerator()

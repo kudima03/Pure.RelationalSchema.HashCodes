@@ -98,7 +98,6 @@ public sealed record SchemaHash : IDeterminedHash
         ).GetEnumerator();
     }
 
-
     IEnumerator IEnumerable.GetEnumerator()
     {
         return GetEnumerator();
