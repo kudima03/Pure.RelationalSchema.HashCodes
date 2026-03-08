@@ -27,40 +27,38 @@ public sealed record SchemaHash : IDeterminedHash
         110,
     ];
 
-    private readonly ISchema? _schema;
-    private readonly IDeterminedHash? _hash;
+    private readonly IDeterminedHash _nameHash;
+    private readonly IDeterminedHash _tablesHash;
+    private readonly IDeterminedHash _foreignKeysHash;
 
     public SchemaHash(ISchema schema)
-    {
-        _schema = schema ?? throw new ArgumentNullException(nameof(schema));
-    }
+        : this(
+            new DeterminedHash(schema.Name),
+            new DeterminedHash(schema.Tables.Select(table => new TableHash(table))),
+            new DeterminedHash(schema.ForeignKeys.Select(fk => new ForeignKeyHash(fk)))
+        )
+    { }
 
-    public SchemaHash(IDeterminedHash hash)
+    public SchemaHash(
+        IDeterminedHash nameHash,
+        IDeterminedHash tablesHash,
+        IDeterminedHash foreignKeysHash)
     {
-        _hash = hash ?? throw new ArgumentNullException(nameof(hash));
+        _nameHash = nameHash;
+        _tablesHash = tablesHash;
+        _foreignKeysHash = foreignKeysHash;
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return _hash is not null
-            ? _hash.GetEnumerator()
-            : new DeterminedHash(
+        return new DeterminedHash(
             TypePrefix
-                .Concat(new DeterminedHash(_schema!.Name))
-                .Concat(
-                    new DeterminedHash(
-                        _schema.Tables.Select(column => new TableHash(column))
-                    )
-                )
-                .Concat(
-                    new DeterminedHash(
-                        _schema.ForeignKeys.Select(foreignKey => new ForeignKeyHash(
-                            foreignKey
-                        ))
-                    )
-                )
+                .Concat(_nameHash)
+                .Concat(_tablesHash)
+                .Concat(_foreignKeysHash)
         ).GetEnumerator();
     }
+
 
     IEnumerator IEnumerable.GetEnumerator()
     {

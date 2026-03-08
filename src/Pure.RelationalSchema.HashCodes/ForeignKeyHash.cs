@@ -27,37 +27,40 @@ public sealed record ForeignKeyHash : IDeterminedHash
         148,
     ];
 
-    private readonly IForeignKey? _foreignKey;
-    private readonly IDeterminedHash? _hash;
+    private readonly IDeterminedHash _referencingTableHash;
+    private readonly IDeterminedHash _referencingColumnsHash;
+    private readonly IDeterminedHash _referencedTableHash;
+    private readonly IDeterminedHash _referencedColumnsHash;
 
     public ForeignKeyHash(IForeignKey foreignKey)
-    {
-        _foreignKey = foreignKey ?? throw new ArgumentNullException(nameof(foreignKey));
-    }
+        : this(
+            new TableHash(foreignKey.ReferencingTable),
+            new DeterminedHash(foreignKey.ReferencingColumns.Select(column => new ColumnHash(column.Name, column.Type))),
+            new TableHash(foreignKey.ReferencedTable),
+            new DeterminedHash(foreignKey.ReferencedColumns.Select(column => new ColumnHash(column.Name, column.Type)))
+        )
+    { }
 
-    public ForeignKeyHash(IDeterminedHash hash)
+    public ForeignKeyHash(
+        IDeterminedHash referencingTableHash,
+        IDeterminedHash referencingColumnsHash,
+        IDeterminedHash referencedTableHash,
+        IDeterminedHash referencedColumnsHash)
     {
-        _hash = hash ?? throw new ArgumentNullException(nameof(hash));
+        _referencingTableHash = referencingTableHash;
+        _referencingColumnsHash = referencingColumnsHash;
+        _referencedTableHash = referencedTableHash;
+        _referencedColumnsHash = referencedColumnsHash;
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return _hash is not null
-            ? _hash.GetEnumerator()
-            : new DeterminedHash(
+        return new DeterminedHash(
             TypePrefix
-                .Concat(new TableHash(_foreignKey!.ReferencingTable))
-                .Concat(
-                    new DeterminedHash(
-                        _foreignKey.ReferencingColumns.Select(x => new ColumnHash(x))
-                    )
-                )
-                .Concat(new TableHash(_foreignKey.ReferencedTable))
-                .Concat(
-                    new DeterminedHash(
-                        _foreignKey.ReferencedColumns.Select(x => new ColumnHash(x))
-                    )
-                )
+                .Concat(_referencingTableHash)
+                .Concat(_referencingColumnsHash)
+                .Concat(_referencedTableHash)
+                .Concat(_referencedColumnsHash)
         ).GetEnumerator();
     }
 

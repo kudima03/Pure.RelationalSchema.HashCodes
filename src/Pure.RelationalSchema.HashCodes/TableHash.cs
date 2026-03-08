@@ -27,36 +27,35 @@ public sealed record TableHash : IDeterminedHash
         5,
     ];
 
-    private readonly ITable? _table;
-    private readonly IDeterminedHash? _hash;
+    private readonly IDeterminedHash _nameHash;
+    private readonly IDeterminedHash _columnsHash;
+    private readonly IDeterminedHash _indexesHash;
 
     public TableHash(ITable table)
-    {
-        _table = table ?? throw new ArgumentNullException(nameof(table));
-    }
+        : this(
+            new DeterminedHash(table.Name),
+            new DeterminedHash(table.Columns.Select(c => new ColumnHash(c.Name, c.Type))),
+            new DeterminedHash(table.Indexes.Select(i => new IndexHash(i.IsUnique, i.Columns)))
+        )
+    { }
 
-    public TableHash(IDeterminedHash hash)
+    public TableHash(
+        IDeterminedHash nameHash,
+        IDeterminedHash columnsHash,
+        IDeterminedHash indexesHash)
     {
-        _hash = hash ?? throw new ArgumentNullException(nameof(hash));
+        _nameHash = nameHash;
+        _columnsHash = columnsHash;
+        _indexesHash = indexesHash;
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return _hash is not null
-            ? _hash.GetEnumerator()
-            : new DeterminedHash(
+        return new DeterminedHash(
             TypePrefix
-                .Concat(new DeterminedHash(_table!.Name))
-                .Concat(
-                    new DeterminedHash(
-                        _table.Columns.Select(column => new ColumnHash(column))
-                    )
-                )
-                .Concat(
-                    new DeterminedHash(
-                        _table.Indexes.Select(index => new IndexHash(index))
-                    )
-                )
+                .Concat(_nameHash)
+                .Concat(_columnsHash)
+                .Concat(_indexesHash)
         ).GetEnumerator();
     }
 

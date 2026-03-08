@@ -1,7 +1,8 @@
 using System.Collections;
 using Pure.HashCodes;
 using Pure.HashCodes.Abstractions;
-using Pure.RelationalSchema.Abstractions.Index;
+using Pure.Primitives.Abstractions.Bool;
+using Pure.RelationalSchema.Abstractions.Column;
 
 namespace Pure.RelationalSchema.HashCodes;
 
@@ -27,31 +28,41 @@ public sealed record IndexHash : IDeterminedHash
         244,
     ];
 
-    private readonly IIndex? _index;
-    private readonly IDeterminedHash? _hash;
+    private readonly IDeterminedHash _isUniqueHash;
+    private readonly IDeterminedHash _columnsHash;
 
-    public IndexHash(IIndex index)
-    {
-        _index = index ?? throw new ArgumentNullException(nameof(index));
-    }
+    public IndexHash(IBool isUnique, IEnumerable<IColumn> columns)
+        : this(
+            new DeterminedHash(isUnique),
+            new DeterminedHash(columns.Select(column => new ColumnHash(column.Name, column.Type)))
+        )
+    { }
 
-    public IndexHash(IDeterminedHash hash)
+    public IndexHash(IDeterminedHash isUniqueHash, IEnumerable<IColumn> columns)
+        : this(
+            isUniqueHash,
+            new DeterminedHash(columns.Select(column => new ColumnHash(column.Name, column.Type)))
+        )
+    { }
+
+    public IndexHash(IBool isUnique, IDeterminedHash columnsHash)
+        : this(
+              new DeterminedHash(isUnique),
+              columnsHash)
+    { }
+
+    public IndexHash(IDeterminedHash isUniqueHash, IDeterminedHash columnsHash)
     {
-        _hash = hash ?? throw new ArgumentNullException(nameof(hash));
+        _isUniqueHash = isUniqueHash;
+        _columnsHash = columnsHash;
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return _hash is not null
-            ? _hash.GetEnumerator()
-            : new DeterminedHash(
+        return new DeterminedHash(
             TypePrefix
-                .Concat(new DeterminedHash(_index!.IsUnique))
-                .Concat(
-                    new DeterminedHash(
-                        _index.Columns.Select(column => new ColumnHash(column))
-                    )
-                )
+                .Concat(_isUniqueHash)
+                .Concat(_columnsHash)
         ).GetEnumerator();
     }
 

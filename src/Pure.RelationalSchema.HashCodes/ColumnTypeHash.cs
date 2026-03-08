@@ -1,7 +1,7 @@
 using System.Collections;
 using Pure.HashCodes;
 using Pure.HashCodes.Abstractions;
-using Pure.RelationalSchema.Abstractions.ColumnType;
+using Pure.Primitives.Abstractions.String;
 
 namespace Pure.RelationalSchema.HashCodes;
 
@@ -27,25 +27,20 @@ public sealed record ColumnTypeHash : IDeterminedHash
         135,
     ];
 
-    private readonly IColumnType? _columnType;
-    private readonly IDeterminedHash? _hash;
+    private readonly IDeterminedHash _nameHash;
 
-    public ColumnTypeHash(IColumnType columnType)
-    {
-        _columnType = columnType ?? throw new ArgumentNullException(nameof(columnType));
-    }
+    public ColumnTypeHash(IString name)
+        : this(new DeterminedHash(name)) { }
 
-    public ColumnTypeHash(IDeterminedHash hash)
+    public ColumnTypeHash(IDeterminedHash nameHash)
     {
-        _hash = hash ?? throw new ArgumentNullException(nameof(hash));
+        _nameHash = nameHash;
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
-        return _hash is not null
-            ? _hash.GetEnumerator()
-            : new DeterminedHash(
-            TypePrefix.Concat(new DeterminedHash(_columnType!.Name))
+        return new DeterminedHash(
+            TypePrefix.Concat(_nameHash)
         ).GetEnumerator();
     }
 
