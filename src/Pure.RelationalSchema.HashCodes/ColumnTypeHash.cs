@@ -2,6 +2,7 @@ using System.Collections;
 using Pure.HashCodes;
 using Pure.HashCodes.Abstractions;
 using Pure.Primitives.Abstractions.String;
+using Pure.RelationalSchema.Abstractions.ColumnType;
 
 namespace Pure.RelationalSchema.HashCodes;
 
@@ -28,6 +29,9 @@ public sealed record ColumnTypeHash : IDeterminedHash
     ];
 
     private readonly IDeterminedHash _nameHash;
+
+    public ColumnTypeHash(IColumnType columnType)
+        : this(new DeterminedHash(columnType.Name)) { }
 
     public ColumnTypeHash(IString name)
         : this(new DeterminedHash(name)) { }

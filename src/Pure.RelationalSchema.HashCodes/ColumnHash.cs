@@ -2,6 +2,7 @@ using System.Collections;
 using Pure.HashCodes;
 using Pure.HashCodes.Abstractions;
 using Pure.Primitives.Abstractions.String;
+using Pure.RelationalSchema.Abstractions.Column;
 using Pure.RelationalSchema.Abstractions.ColumnType;
 
 namespace Pure.RelationalSchema.HashCodes;
@@ -31,14 +32,33 @@ public sealed record ColumnHash : IDeterminedHash
     private readonly IDeterminedHash _nameHash;
     private readonly IDeterminedHash _typeHash;
 
+    public ColumnHash(IColumn column)
+        : this(
+              new DeterminedHash(column.Name),
+              new ColumnTypeHash(column.Type)
+        )
+    { }
+
     public ColumnHash(IString name, IColumnType type)
-       : this(new DeterminedHash(name), new ColumnTypeHash(type.Name)) { }
+       : this(
+             new DeterminedHash(name),
+             new ColumnTypeHash(type)
+       )
+    { }
 
     public ColumnHash(IDeterminedHash nameHash, IColumnType type)
-        : this(nameHash, new ColumnTypeHash(type.Name)) { }
+        : this(
+              nameHash,
+              new ColumnTypeHash(type)
+        )
+    { }
 
     public ColumnHash(IString name, IDeterminedHash typeHash)
-        : this(new DeterminedHash(name), typeHash) { }
+        : this(
+              new DeterminedHash(name),
+              typeHash
+        )
+    { }
 
     public ColumnHash(IDeterminedHash nameHash, IDeterminedHash typeHash)
     {

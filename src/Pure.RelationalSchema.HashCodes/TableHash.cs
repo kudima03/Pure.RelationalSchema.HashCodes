@@ -4,6 +4,7 @@ using Pure.HashCodes.Abstractions;
 using Pure.Primitives.Abstractions.String;
 using Pure.RelationalSchema.Abstractions.Column;
 using Pure.RelationalSchema.Abstractions.Index;
+using Pure.RelationalSchema.Abstractions.Table;
 
 namespace Pure.RelationalSchema.HashCodes;
 
@@ -33,19 +34,27 @@ public sealed record TableHash : IDeterminedHash
     private readonly IDeterminedHash _columnsHash;
     private readonly IDeterminedHash _indexesHash;
 
+    public TableHash(ITable table) :
+        this(
+            new DeterminedHash(table.Name),
+            new DeterminedHash(table.Columns.Select(c => new ColumnHash(c))),
+            new DeterminedHash(table.Indexes.Select(i => new IndexHash(i)))
+            )
+    { }
+
     public TableHash(IString name, IEnumerable<IColumn> columns, IEnumerable<IIndex> indexes)
         : this(
             new DeterminedHash(name),
-            new DeterminedHash(columns.Select(c => new ColumnHash(c.Name, c.Type))),
-            new DeterminedHash(indexes.Select(i => new IndexHash(i.IsUnique, i.Columns)))
+            new DeterminedHash(columns.Select(c => new ColumnHash(c))),
+            new DeterminedHash(indexes.Select(i => new IndexHash(i)))
         )
     { }
 
     public TableHash(IDeterminedHash nameHash, IEnumerable<IColumn> columns, IEnumerable<IIndex> indexes)
         : this(
             nameHash,
-            new DeterminedHash(columns.Select(c => new ColumnHash(c.Name, c.Type))),
-            new DeterminedHash(indexes.Select(i => new IndexHash(i.IsUnique, i.Columns)))
+            new DeterminedHash(columns.Select(c => new ColumnHash(c))),
+            new DeterminedHash(indexes.Select(i => new IndexHash(i)))
         )
     { }
 
@@ -53,14 +62,14 @@ public sealed record TableHash : IDeterminedHash
         : this(
             new DeterminedHash(name),
             columnsHash,
-            new DeterminedHash(indexes.Select(i => new IndexHash(i.IsUnique, i.Columns)))
+            new DeterminedHash(indexes.Select(i => new IndexHash(i)))
         )
     { }
 
     public TableHash(IString name, IEnumerable<IColumn> columns, IDeterminedHash indexesHash)
         : this(
             new DeterminedHash(name),
-            new DeterminedHash(columns.Select(c => new ColumnHash(c.Name, c.Type))),
+            new DeterminedHash(columns.Select(c => new ColumnHash(c))),
             indexesHash
         )
     { }
@@ -69,14 +78,14 @@ public sealed record TableHash : IDeterminedHash
         : this(
             nameHash,
             columnsHash,
-            new DeterminedHash(indexes.Select(i => new IndexHash(i.IsUnique, i.Columns)))
+            new DeterminedHash(indexes.Select(i => new IndexHash(i)))
         )
     { }
 
     public TableHash(IDeterminedHash nameHash, IEnumerable<IColumn> columns, IDeterminedHash indexesHash)
         : this(
             nameHash,
-            new DeterminedHash(columns.Select(c => new ColumnHash(c.Name, c.Type))),
+            new DeterminedHash(columns.Select(c => new ColumnHash(c))),
             indexesHash
         )
     { }

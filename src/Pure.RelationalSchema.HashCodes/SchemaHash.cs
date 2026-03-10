@@ -3,6 +3,7 @@ using Pure.HashCodes;
 using Pure.HashCodes.Abstractions;
 using Pure.Primitives.Abstractions.String;
 using Pure.RelationalSchema.Abstractions.ForeignKey;
+using Pure.RelationalSchema.Abstractions.Schema;
 using Pure.RelationalSchema.Abstractions.Table;
 
 namespace Pure.RelationalSchema.HashCodes;
@@ -33,44 +34,52 @@ public sealed record SchemaHash : IDeterminedHash
     private readonly IDeterminedHash _tablesHash;
     private readonly IDeterminedHash _foreignKeysHash;
 
+    public SchemaHash(ISchema schema) :
+        this(
+            new DeterminedHash(schema.Name),
+            new DeterminedHash(schema.Tables.Select(t => new TableHash(t))),
+            new DeterminedHash(schema.ForeignKeys.Select(fk => new ForeignKeyHash(fk)))
+            )
+    { }
+
     public SchemaHash(IString name, IEnumerable<ITable> tables, IEnumerable<IForeignKey> foreignKeys)
         : this(
               new DeterminedHash(name),
-              new DeterminedHash(tables.Select(t => new TableHash(t.Name, t.Columns, t.Indexes))),
-              new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk.ReferencingTable, fk.ReferencingColumns, fk.ReferencedTable, fk.ReferencedColumns))))
+              new DeterminedHash(tables.Select(t => new TableHash(t))),
+              new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk))))
     { }
 
     public SchemaHash(IDeterminedHash nameHash, IEnumerable<ITable> tables, IEnumerable<IForeignKey> foreignKeys)
         : this(
               nameHash,
-              new DeterminedHash(tables.Select(t => new TableHash(t.Name, t.Columns, t.Indexes))),
-              new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk.ReferencingTable, fk.ReferencingColumns, fk.ReferencedTable, fk.ReferencedColumns))))
+              new DeterminedHash(tables.Select(t => new TableHash(t))),
+              new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk))))
     { }
 
     public SchemaHash(IString name, IDeterminedHash tablesHash, IEnumerable<IForeignKey> foreignKeys)
         : this(
               new DeterminedHash(name),
               tablesHash,
-              new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk.ReferencingTable, fk.ReferencingColumns, fk.ReferencedTable, fk.ReferencedColumns))))
+              new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk))))
     { }
 
     public SchemaHash(IString name, IEnumerable<ITable> tables, IDeterminedHash foreignKeysHash)
         : this(
               new DeterminedHash(name),
-              new DeterminedHash(tables.Select(t => new TableHash(t.Name, t.Columns, t.Indexes))),
+              new DeterminedHash(tables.Select(t => new TableHash(t))),
               foreignKeysHash)
     { }
 
     public SchemaHash(IDeterminedHash nameHash, IDeterminedHash tablesHash, IEnumerable<IForeignKey> foreignKeys)
         : this(nameHash,
               tablesHash,
-              new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk.ReferencingTable, fk.ReferencingColumns, fk.ReferencedTable, fk.ReferencedColumns))))
+              new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk))))
     { }
 
     public SchemaHash(IDeterminedHash nameHash, IEnumerable<ITable> tables, IDeterminedHash foreignKeysHash)
         : this(
               nameHash,
-              new DeterminedHash(tables.Select(t => new TableHash(t.Name, t.Columns, t.Indexes))),
+              new DeterminedHash(tables.Select(t => new TableHash(t))),
               foreignKeysHash)
     { }
 

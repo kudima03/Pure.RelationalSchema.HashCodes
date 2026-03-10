@@ -3,6 +3,7 @@ using Pure.HashCodes;
 using Pure.HashCodes.Abstractions;
 using Pure.Primitives.Abstractions.Bool;
 using Pure.RelationalSchema.Abstractions.Column;
+using Pure.RelationalSchema.Abstractions.Index;
 
 namespace Pure.RelationalSchema.HashCodes;
 
@@ -31,17 +32,24 @@ public sealed record IndexHash : IDeterminedHash
     private readonly IDeterminedHash _isUniqueHash;
     private readonly IDeterminedHash _columnsHash;
 
+    public IndexHash(IIndex index) :
+        this(
+            new DeterminedHash(index.IsUnique),
+            new DeterminedHash(index.Columns.Select(c => new ColumnHash(c)))
+        )
+    { }
+
     public IndexHash(IBool isUnique, IEnumerable<IColumn> columns)
         : this(
             new DeterminedHash(isUnique),
-            new DeterminedHash(columns.Select(column => new ColumnHash(column.Name, column.Type)))
+            new DeterminedHash(columns.Select(c => new ColumnHash(c)))
         )
     { }
 
     public IndexHash(IDeterminedHash isUniqueHash, IEnumerable<IColumn> columns)
         : this(
             isUniqueHash,
-            new DeterminedHash(columns.Select(column => new ColumnHash(column.Name, column.Type)))
+            new DeterminedHash(columns.Select(c => new ColumnHash(c)))
         )
     { }
 
