@@ -76,6 +76,55 @@ public sealed record ColumnHashTests
     }
 
     [Fact]
+    public void ProduceCorrectHashFromNameAndType()
+    {
+        IColumn randomColumn = new RandomColumn();
+
+        Assert.Equal(
+            new ColumnHash(randomColumn),
+            new ColumnHash(randomColumn.Name, randomColumn.Type)
+        );
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameHashAndType()
+    {
+        IColumn randomColumn = new RandomColumn();
+        IDeterminedHash nameHash = new DeterminedHash(randomColumn.Name);
+
+        Assert.Equal(
+            new ColumnHash(randomColumn),
+            new ColumnHash(nameHash, randomColumn.Type)
+        );
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameAndTypeHash()
+    {
+        IColumn randomColumn = new RandomColumn();
+        IDeterminedHash typeHash = new ColumnTypeHash(randomColumn.Type);
+
+        Assert.Equal(
+            new ColumnHash(randomColumn),
+            new ColumnHash(randomColumn.Name, typeHash)
+        );
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromHashes()
+    {
+        IColumn randomColumn = new RandomColumn();
+
+        IDeterminedHash nameHash = new DeterminedHash(randomColumn.Name);
+        IDeterminedHash typeHash = new ColumnTypeHash(randomColumn.Type);
+
+        Assert.Equal(
+            new ColumnHash(randomColumn),
+            new ColumnHash(nameHash, typeHash)
+        );
+    }
+
+    [Fact]
     public void ThrowsExceptionOnGetHashCode()
     {
         _ = Assert.Throws<NotSupportedException>(() =>

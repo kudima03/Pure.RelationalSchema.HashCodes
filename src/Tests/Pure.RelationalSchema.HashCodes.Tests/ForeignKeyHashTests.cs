@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Security.Cryptography;
 using Pure.HashCodes;
+using Pure.HashCodes.Abstractions;
 using Pure.Primitives.Bool;
 using Pure.RelationalSchema.Abstractions.Column;
 using Pure.RelationalSchema.Abstractions.ForeignKey;
@@ -98,6 +99,58 @@ public sealed record ForeignKeyHashTests
         );
 
         Assert.Equal(expectedHash, new ForeignKeyHash(randomForeignKey));
+    }
+
+    [Fact]
+    public void AllConstructorsProduceSameHash()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        ITable referencingTable = fk.ReferencingTable;
+        ITable referencedTable = fk.ReferencedTable;
+
+        IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
+        IEnumerable<IColumn> referencedColumns = fk.ReferencedColumns;
+
+        IDeterminedHash referencingTableHash = new TableHash(referencingTable);
+        IDeterminedHash referencedTableHash = new TableHash(referencedTable);
+
+        IDeterminedHash referencingColumnsHash =
+            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c)));
+
+        IDeterminedHash referencedColumnsHash =
+            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)));
+
+        byte[] expected = new ForeignKeyHash(fk).ToArray();
+
+        IEnumerable<byte[]> hashes =
+        [
+            new ForeignKeyHash(referencingTable, referencingColumns, referencedTable, referencedColumns).ToArray(),
+        new ForeignKeyHash(referencingTableHash, referencingColumns, referencedTable, referencedColumns).ToArray(),
+        new ForeignKeyHash(referencingTable, referencingColumnsHash, referencedTable, referencedColumns).ToArray(),
+        new ForeignKeyHash(referencingTable, referencingColumns, referencedTableHash, referencedColumns).ToArray(),
+        new ForeignKeyHash(referencingTable, referencingColumns, referencedTable, referencedColumnsHash).ToArray(),
+
+        new ForeignKeyHash(referencingTableHash, referencingColumnsHash, referencedTable, referencedColumns).ToArray(),
+        new ForeignKeyHash(referencingTableHash, referencingColumns, referencedTableHash, referencedColumns).ToArray(),
+        new ForeignKeyHash(referencingTableHash, referencingColumns, referencedTable, referencedColumnsHash).ToArray(),
+
+        new ForeignKeyHash(referencingTable, referencingColumnsHash, referencedTableHash, referencedColumns).ToArray(),
+        new ForeignKeyHash(referencingTable, referencingColumnsHash, referencedTable, referencedColumnsHash).ToArray(),
+        new ForeignKeyHash(referencingTable, referencingColumns, referencedTableHash, referencedColumnsHash).ToArray(),
+
+        new ForeignKeyHash(referencingTableHash, referencingColumnsHash, referencedTableHash, referencedColumns).ToArray(),
+        new ForeignKeyHash(referencingTableHash, referencingColumnsHash, referencedTable, referencedColumnsHash).ToArray(),
+        new ForeignKeyHash(referencingTableHash, referencingColumns, referencedTableHash, referencedColumnsHash).ToArray(),
+        new ForeignKeyHash(referencingTable, referencingColumnsHash, referencedTableHash, referencedColumnsHash).ToArray(),
+
+        new ForeignKeyHash(referencingTableHash, referencingColumnsHash, referencedTableHash, referencedColumnsHash).ToArray(),
+    ];
+
+        foreach (byte[] hash in hashes)
+        {
+            Assert.Equal(expected, hash);
+        }
     }
 
     [Fact]

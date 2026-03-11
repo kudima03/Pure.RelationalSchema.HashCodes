@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Security.Cryptography;
 using Pure.HashCodes;
+using Pure.HashCodes.Abstractions;
 using Pure.Primitives.Abstractions.String;
 using Pure.Primitives.Bool;
 using Pure.RelationalSchema.Abstractions.Column;
@@ -131,6 +132,41 @@ public sealed record SchemaHashTests
             new SchemaHash(randomSchema).AsEnumerable(),
             new SchemaHash(schemaWithReversedTables).AsEnumerable()
         );
+    }
+
+    [Fact]
+    public void AllConstructorsProduceSameHash()
+    {
+        ISchema schema = new RandomSchema();
+
+        IString name = schema.Name;
+        IEnumerable<ITable> tables = schema.Tables;
+        IEnumerable<IForeignKey> foreignKeys = schema.ForeignKeys;
+
+        IDeterminedHash nameHash = new DeterminedHash(name);
+        IDeterminedHash tablesHash =
+            new DeterminedHash(tables.Select(t => new TableHash(t)));
+        IDeterminedHash foreignKeysHash =
+            new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk)));
+
+        byte[] expected = new SchemaHash(schema).ToArray();
+
+        IEnumerable<byte[]> hashes =
+        [
+            new SchemaHash(name, tables, foreignKeys).ToArray(),
+        new SchemaHash(nameHash, tables, foreignKeys).ToArray(),
+        new SchemaHash(name, tablesHash, foreignKeys).ToArray(),
+        new SchemaHash(name, tables, foreignKeysHash).ToArray(),
+        new SchemaHash(nameHash, tablesHash, foreignKeys).ToArray(),
+        new SchemaHash(nameHash, tables, foreignKeysHash).ToArray(),
+        new SchemaHash(name, tablesHash, foreignKeysHash).ToArray(),
+        new SchemaHash(nameHash, tablesHash, foreignKeysHash).ToArray(),
+    ];
+
+        foreach (byte[] hash in hashes)
+        {
+            Assert.Equal(expected, hash);
+        }
     }
 
     [Fact]

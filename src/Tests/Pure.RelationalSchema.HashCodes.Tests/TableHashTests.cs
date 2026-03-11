@@ -201,6 +201,51 @@ public sealed record TableHashTests
     }
 
     [Fact]
+    public void AllConstructorsProduceSameHash()
+    {
+        IString name = new String("Sample");
+
+        IReadOnlyCollection<IColumn> columns =
+        [
+            new Column(new String("a"), new DateColumnType()),
+        new Column(new String("b"), new TimeColumnType()),
+        new Column(new String("c"), new IntColumnType()),
+    ];
+
+        IReadOnlyCollection<IIndex> indexes =
+        [
+            new Index(new True(), columns.Take(1)),
+        new Index(new True(), columns.Skip(1).Take(1)),
+    ];
+
+        IDeterminedHash nameHash = new DeterminedHash(name);
+        IDeterminedHash columnsHash =
+            new DeterminedHash(columns.Select(c => new ColumnHash(c)));
+        IDeterminedHash indexesHash =
+            new DeterminedHash(indexes.Select(i => new IndexHash(i)));
+
+        byte[] expected =
+            new TableHash(new Table(name, columns, indexes)).ToArray();
+
+        IEnumerable<byte[]> hashes =
+        [
+            new TableHash(name, columns, indexes).ToArray(),
+        new TableHash(nameHash, columns, indexes).ToArray(),
+        new TableHash(name, columnsHash, indexes).ToArray(),
+        new TableHash(name, columns, indexesHash).ToArray(),
+        new TableHash(nameHash, columnsHash, indexes).ToArray(),
+        new TableHash(nameHash, columns, indexesHash).ToArray(),
+        new TableHash(name, columnsHash, indexesHash).ToArray(),
+        new TableHash(nameHash, columnsHash, indexesHash).ToArray(),
+    ];
+
+        foreach (byte[] hash in hashes)
+        {
+            Assert.Equal(expected, hash);
+        }
+    }
+
+    [Fact]
     public void Determined()
     {
         IString name = new String("Sample name");

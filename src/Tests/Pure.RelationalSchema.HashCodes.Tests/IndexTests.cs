@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Security.Cryptography;
 using Pure.HashCodes;
+using Pure.HashCodes.Abstractions;
 using Pure.Primitives.Abstractions.Bool;
 using Pure.Primitives.Bool;
 using Pure.RelationalSchema.Abstractions.Column;
@@ -101,6 +102,79 @@ public sealed record IndexTests
             new IndexHash(randomIndex).AsEnumerable(),
             new IndexHash(indexWithReversedColumns).AsEnumerable()
         );
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromBoolAndColumns()
+    {
+        IIndex index = new RandomIndex();
+
+        IBool isUnique = index.IsUnique;
+        IEnumerable<IColumn> columns = index.Columns;
+
+        byte[] expected = new IndexHash(index).ToArray();
+
+        byte[] actual =
+            new IndexHash(isUnique, columns).ToArray();
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromBoolHashAndColumns()
+    {
+        IIndex index = new RandomIndex();
+
+        IBool isUnique = index.IsUnique;
+        IEnumerable<IColumn> columns = index.Columns;
+
+        IDeterminedHash isUniqueHash = new DeterminedHash(isUnique);
+
+        byte[] expected = new IndexHash(index).ToArray();
+
+        byte[] actual =
+            new IndexHash(isUniqueHash, columns).ToArray();
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromBoolAndColumnsHash()
+    {
+        IIndex index = new RandomIndex();
+
+        IBool isUnique = index.IsUnique;
+        IEnumerable<IColumn> columns = index.Columns;
+
+        IDeterminedHash columnsHash =
+            new DeterminedHash(columns.Select(c => new ColumnHash(c)));
+
+        byte[] expected = new IndexHash(index).ToArray();
+
+        byte[] actual =
+            new IndexHash(isUnique, columnsHash).ToArray();
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromHashes()
+    {
+        IIndex index = new RandomIndex();
+
+        IBool isUnique = index.IsUnique;
+        IEnumerable<IColumn> columns = index.Columns;
+
+        IDeterminedHash isUniqueHash = new DeterminedHash(isUnique);
+        IDeterminedHash columnsHash =
+            new DeterminedHash(columns.Select(c => new ColumnHash(c)));
+
+        byte[] expected = new IndexHash(index).ToArray();
+
+        byte[] actual =
+            new IndexHash(isUniqueHash, columnsHash).ToArray();
+
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
