@@ -36,10 +36,10 @@ public sealed record ForeignKeyHash : IDeterminedHash
 
     public ForeignKeyHash(IForeignKey foreignKey) :
         this(
-            new TableHash(foreignKey.ReferencingTable),
-            new DeterminedHash(foreignKey.ReferencingColumns.Select(c => new ColumnHash(c))),
-            new TableHash(foreignKey.ReferencedTable),
-            new DeterminedHash(foreignKey.ReferencedColumns.Select(c => new ColumnHash(c)))
+            foreignKey.ReferencingTable,
+            foreignKey.ReferencingColumns,
+            foreignKey.ReferencedTable,
+            foreignKey.ReferencedColumns
             )
     { }
 
@@ -50,9 +50,9 @@ public sealed record ForeignKeyHash : IDeterminedHash
         IEnumerable<IColumn> referencedColumns)
         : this(
             new TableHash(referencingTable),
-            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c))),
-            new TableHash(referencedTable),
-            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)))
+            referencingColumns,
+            referencedTable,
+            referencedColumns
         )
     { }
 
@@ -64,9 +64,9 @@ public sealed record ForeignKeyHash : IDeterminedHash
         : this(
             referencingTableHash,
             new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c))),
-            new TableHash(referencedTable),
-            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)))
-        )
+            referencedTable,
+            referencedColumns
+              )
     { }
 
     public ForeignKeyHash(
@@ -75,10 +75,10 @@ public sealed record ForeignKeyHash : IDeterminedHash
         ITable referencedTable,
         IEnumerable<IColumn> referencedColumns)
         : this(
-            new TableHash(referencingTable),
+            referencingTable,
             referencingColumnsHash,
             new TableHash(referencedTable),
-            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)))
+            referencedColumns
         )
     { }
 
@@ -88,8 +88,8 @@ public sealed record ForeignKeyHash : IDeterminedHash
         IDeterminedHash referencedTableHash,
         IEnumerable<IColumn> referencedColumns)
         : this(
-            new TableHash(referencingTable),
-            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c))),
+            referencingTable,
+            referencingColumns,
             referencedTableHash,
             new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)))
         )
@@ -102,10 +102,23 @@ public sealed record ForeignKeyHash : IDeterminedHash
         IDeterminedHash referencedColumnsHash)
         : this(
             new TableHash(referencingTable),
-            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c))),
-            new TableHash(referencedTable),
+            referencingColumns,
+            referencedTable,
             referencedColumnsHash
         )
+    { }
+
+    public ForeignKeyHash(
+    IDeterminedHash referencingTableHash,
+    IEnumerable<IColumn> referencingColumns,
+    ITable referencedTable,
+    IDeterminedHash referencedColumnsHash)
+    : this(
+        referencingTableHash,
+        new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c))),
+        referencedTable,
+        referencedColumnsHash
+    )
     { }
 
     public ForeignKeyHash(
@@ -117,7 +130,20 @@ public sealed record ForeignKeyHash : IDeterminedHash
             referencingTableHash,
             referencingColumnsHash,
             new TableHash(referencedTable),
-            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)))
+            referencedColumns
+        )
+    { }
+
+    public ForeignKeyHash(
+        ITable referencingTable,
+        IDeterminedHash referencingColumnsHash,
+        ITable referencedTable,
+        IDeterminedHash referencedColumnsHash)
+        : this(
+            referencingTable,
+            referencingColumnsHash,
+            new TableHash(referencedTable),
+            referencedColumnsHash
         )
     { }
 
@@ -128,26 +154,13 @@ public sealed record ForeignKeyHash : IDeterminedHash
         IEnumerable<IColumn> referencedColumns)
         : this(
             referencingTableHash,
-            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c))),
+            referencingColumns,
             referencedTableHash,
             new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)))
         )
     { }
 
     public ForeignKeyHash(
-        IDeterminedHash referencingTableHash,
-        IEnumerable<IColumn> referencingColumns,
-        ITable referencedTable,
-        IDeterminedHash referencedColumnsHash)
-        : this(
-            referencingTableHash,
-            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c))),
-            new TableHash(referencedTable),
-            referencedColumnsHash
-        )
-    { }
-
-    public ForeignKeyHash(
         ITable referencingTable,
         IDeterminedHash referencingColumnsHash,
         IDeterminedHash referencedTableHash,
@@ -156,20 +169,7 @@ public sealed record ForeignKeyHash : IDeterminedHash
             new TableHash(referencingTable),
             referencingColumnsHash,
             referencedTableHash,
-            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)))
-        )
-    { }
-
-    public ForeignKeyHash(
-        ITable referencingTable,
-        IDeterminedHash referencingColumnsHash,
-        ITable referencedTable,
-        IDeterminedHash referencedColumnsHash)
-        : this(
-            new TableHash(referencingTable),
-            referencingColumnsHash,
-            new TableHash(referencedTable),
-            referencedColumnsHash
+            referencedColumns
         )
     { }
 
@@ -180,7 +180,7 @@ public sealed record ForeignKeyHash : IDeterminedHash
         IDeterminedHash referencedColumnsHash)
         : this(
             new TableHash(referencingTable),
-            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c))),
+            referencingColumns,
             referencedTableHash,
             referencedColumnsHash
         )

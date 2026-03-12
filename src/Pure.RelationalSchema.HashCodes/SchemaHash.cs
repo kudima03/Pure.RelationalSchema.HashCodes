@@ -36,29 +36,29 @@ public sealed record SchemaHash : IDeterminedHash
 
     public SchemaHash(ISchema schema) :
         this(
-            new DeterminedHash(schema.Name),
-            new DeterminedHash(schema.Tables.Select(t => new TableHash(t))),
-            new DeterminedHash(schema.ForeignKeys.Select(fk => new ForeignKeyHash(fk)))
+            schema.Name,
+            schema.Tables,
+            schema.ForeignKeys
             )
     { }
 
     public SchemaHash(IString name, IEnumerable<ITable> tables, IEnumerable<IForeignKey> foreignKeys)
         : this(
               new DeterminedHash(name),
-              new DeterminedHash(tables.Select(t => new TableHash(t))),
-              new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk))))
+              tables,
+              foreignKeys)
     { }
 
     public SchemaHash(IDeterminedHash nameHash, IEnumerable<ITable> tables, IEnumerable<IForeignKey> foreignKeys)
         : this(
               nameHash,
               new DeterminedHash(tables.Select(t => new TableHash(t))),
-              new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk))))
+              foreignKeys)
     { }
 
     public SchemaHash(IString name, IDeterminedHash tablesHash, IEnumerable<IForeignKey> foreignKeys)
         : this(
-              new DeterminedHash(name),
+              name,
               tablesHash,
               new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk))))
     { }
@@ -66,12 +66,13 @@ public sealed record SchemaHash : IDeterminedHash
     public SchemaHash(IString name, IEnumerable<ITable> tables, IDeterminedHash foreignKeysHash)
         : this(
               new DeterminedHash(name),
-              new DeterminedHash(tables.Select(t => new TableHash(t))),
+              tables,
               foreignKeysHash)
     { }
 
     public SchemaHash(IDeterminedHash nameHash, IDeterminedHash tablesHash, IEnumerable<IForeignKey> foreignKeys)
-        : this(nameHash,
+        : this(
+              nameHash,
               tablesHash,
               new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk))))
     { }

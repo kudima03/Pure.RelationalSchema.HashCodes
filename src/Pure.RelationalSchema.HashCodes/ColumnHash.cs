@@ -34,15 +34,15 @@ public sealed record ColumnHash : IDeterminedHash
 
     public ColumnHash(IColumn column)
         : this(
-              new DeterminedHash(column.Name),
-              new ColumnTypeHash(column.Type)
+               column.Name,
+               column.Type
         )
     { }
 
     public ColumnHash(IString name, IColumnType type)
        : this(
              new DeterminedHash(name),
-             new ColumnTypeHash(type)
+             type
        )
     { }
 

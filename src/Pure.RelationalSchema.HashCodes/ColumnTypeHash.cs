@@ -31,7 +31,7 @@ public sealed record ColumnTypeHash : IDeterminedHash
     private readonly IDeterminedHash _nameHash;
 
     public ColumnTypeHash(IColumnType columnType)
-        : this(new DeterminedHash(columnType.Name)) { }
+        : this(columnType.Name) { }
 
     public ColumnTypeHash(IString name)
         : this(new DeterminedHash(name)) { }

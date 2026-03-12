@@ -34,15 +34,15 @@ public sealed record IndexHash : IDeterminedHash
 
     public IndexHash(IIndex index) :
         this(
-            new DeterminedHash(index.IsUnique),
-            new DeterminedHash(index.Columns.Select(c => new ColumnHash(c)))
+            index.IsUnique,
+            index.Columns
         )
     { }
 
     public IndexHash(IBool isUnique, IEnumerable<IColumn> columns)
         : this(
             new DeterminedHash(isUnique),
-            new DeterminedHash(columns.Select(c => new ColumnHash(c)))
+            columns
         )
     { }
 

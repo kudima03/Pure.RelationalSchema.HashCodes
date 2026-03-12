@@ -36,17 +36,17 @@ public sealed record TableHash : IDeterminedHash
 
     public TableHash(ITable table) :
         this(
-            new DeterminedHash(table.Name),
-            new DeterminedHash(table.Columns.Select(c => new ColumnHash(c))),
-            new DeterminedHash(table.Indexes.Select(i => new IndexHash(i)))
+            table.Name,
+            table.Columns,
+            table.Indexes
             )
     { }
 
     public TableHash(IString name, IEnumerable<IColumn> columns, IEnumerable<IIndex> indexes)
         : this(
             new DeterminedHash(name),
-            new DeterminedHash(columns.Select(c => new ColumnHash(c))),
-            new DeterminedHash(indexes.Select(i => new IndexHash(i)))
+            columns,
+            indexes
         )
     { }
 
@@ -54,13 +54,13 @@ public sealed record TableHash : IDeterminedHash
         : this(
             nameHash,
             new DeterminedHash(columns.Select(c => new ColumnHash(c))),
-            new DeterminedHash(indexes.Select(i => new IndexHash(i)))
+            indexes
         )
     { }
 
     public TableHash(IString name, IDeterminedHash columnsHash, IEnumerable<IIndex> indexes)
         : this(
-            new DeterminedHash(name),
+            name,
             columnsHash,
             new DeterminedHash(indexes.Select(i => new IndexHash(i)))
         )
@@ -69,7 +69,7 @@ public sealed record TableHash : IDeterminedHash
     public TableHash(IString name, IEnumerable<IColumn> columns, IDeterminedHash indexesHash)
         : this(
             new DeterminedHash(name),
-            new DeterminedHash(columns.Select(c => new ColumnHash(c))),
+            columns,
             indexesHash
         )
     { }
