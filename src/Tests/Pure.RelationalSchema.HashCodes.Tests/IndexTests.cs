@@ -105,7 +105,7 @@ public sealed record IndexTests
     }
 
     [Fact]
-    public void ProduceCorrectHashFromBoolAndColumns()
+    public void ProduceCorrectHashFromIsUniqueAndColumns()
     {
         IIndex index = new RandomIndex();
 
@@ -119,7 +119,7 @@ public sealed record IndexTests
     }
 
     [Fact]
-    public void ProduceCorrectHashFromBoolHashAndColumns()
+    public void ProduceCorrectHashFromIsUniqueHashAndColumns()
     {
         IIndex index = new RandomIndex();
 
@@ -135,7 +135,7 @@ public sealed record IndexTests
     }
 
     [Fact]
-    public void ProduceCorrectHashFromBoolAndColumnsHash()
+    public void ProduceCorrectHashFromIsUniqueAndColumnsHash()
     {
         IIndex index = new RandomIndex();
 
