@@ -201,48 +201,131 @@ public sealed record TableHashTests
     }
 
     [Fact]
-    public void AllConstructorsProduceSameHash()
+    public void ProduceCorrectHashFromNameAndColumnsAndIndexes()
     {
-        IString name = new String("Sample");
+        IColumn column = new Column(new String("Col1"), new IntColumnType());
+        IIndex index = new Index(new True(), [column]);
 
-        IReadOnlyCollection<IColumn> columns =
-        [
-            new Column(new String("a"), new DateColumnType()),
-        new Column(new String("b"), new TimeColumnType()),
-        new Column(new String("c"), new IntColumnType()),
-    ];
+        IString name = new String("Table1");
+        IEnumerable<IColumn> columns = [column];
+        IEnumerable<IIndex> indexes = [index];
 
-        IReadOnlyCollection<IIndex> indexes =
-        [
-            new Index(new True(), columns.Take(1)),
-        new Index(new True(), columns.Skip(1).Take(1)),
-    ];
+        TableHash expected = new TableHash(name, columns, indexes);
+        TableHash actual = new TableHash(name, columns, indexes);
 
-        IDeterminedHash nameHash = new DeterminedHash(name);
-        IDeterminedHash columnsHash =
-            new DeterminedHash(columns.Select(c => new ColumnHash(c)));
-        IDeterminedHash indexesHash =
-            new DeterminedHash(indexes.Select(i => new IndexHash(i)));
+        Assert.True(expected.SequenceEqual(actual));
+    }
 
-        byte[] expected =
-            new TableHash(new Table(name, columns, indexes)).ToArray();
+    [Fact]
+    public void ProduceCorrectHashFromNameHashAndColumnsAndIndexes()
+    {
+        IColumn column = new Column(new String("Col1"), new IntColumnType());
+        IIndex index = new Index(new True(), [column]);
 
-        IEnumerable<byte[]> hashes =
-        [
-            new TableHash(name, columns, indexes).ToArray(),
-        new TableHash(nameHash, columns, indexes).ToArray(),
-        new TableHash(name, columnsHash, indexes).ToArray(),
-        new TableHash(name, columns, indexesHash).ToArray(),
-        new TableHash(nameHash, columnsHash, indexes).ToArray(),
-        new TableHash(nameHash, columns, indexesHash).ToArray(),
-        new TableHash(name, columnsHash, indexesHash).ToArray(),
-        new TableHash(nameHash, columnsHash, indexesHash).ToArray(),
-    ];
+        IDeterminedHash nameHash = new DeterminedHash(new String("Table1"));
+        IEnumerable<IColumn> columns = [column];
+        IEnumerable<IIndex> indexes = [index];
 
-        foreach (byte[] hash in hashes)
-        {
-            Assert.Equal(expected, hash);
-        }
+        TableHash expected = new TableHash(new String("Table1"), columns, indexes);
+        TableHash actual = new TableHash(nameHash, columns, indexes);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameAndColumnsHashAndIndexes()
+    {
+        IColumn column = new Column(new String("Col1"), new IntColumnType());
+        IIndex index = new Index(new True(), [column]);
+
+        IString name = new String("Table1");
+        IDeterminedHash columnsHash = new DeterminedHash([new ColumnHash(column)]);
+        IEnumerable<IIndex> indexes = [index];
+
+        TableHash expected = new TableHash(name, [column], indexes);
+        TableHash actual = new TableHash(name, columnsHash, indexes);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameAndColumnsAndIndexesHash()
+    {
+        IColumn column = new Column(new String("Col1"), new IntColumnType());
+        IIndex index = new Index(new True(), [column]);
+
+        IString name = new String("Table1");
+        IEnumerable<IColumn> columns = [column];
+        IDeterminedHash indexesHash = new DeterminedHash([new IndexHash(index)]);
+
+        TableHash expected = new TableHash(name, columns, [index]);
+        TableHash actual = new TableHash(name, columns, indexesHash);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameHashColumnsHashAndIndexes()
+    {
+        IColumn column = new Column(new String("Col1"), new IntColumnType());
+        IIndex index = new Index(new True(), [column]);
+
+        IDeterminedHash nameHash = new DeterminedHash(new String("Table1"));
+        IDeterminedHash columnsHash = new DeterminedHash([new ColumnHash(column)]);
+        IEnumerable<IIndex> indexes = [index];
+
+        TableHash expected = new TableHash(new String("Table1"), [column], indexes);
+        TableHash actual = new TableHash(nameHash, columnsHash, indexes);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameHashColumnsAndIndexesHash()
+    {
+        IColumn column = new Column(new String("Col1"), new IntColumnType());
+        IIndex index = new Index(new True(), [column]);
+
+        IDeterminedHash nameHash = new DeterminedHash(new String("Table1"));
+        IEnumerable<IColumn> columns = [column];
+        IDeterminedHash indexesHash = new DeterminedHash([new IndexHash(index)]);
+
+        TableHash expected = new TableHash(new String("Table1"), columns, [index]);
+        TableHash actual = new TableHash(nameHash, columns, indexesHash);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameColumnsHashAndIndexesHash()
+    {
+        IColumn column = new Column(new String("Col1"), new IntColumnType());
+        IIndex index = new Index(new True(), [column]);
+
+        IString name = new String("Table1");
+        IDeterminedHash columnsHash = new DeterminedHash([new ColumnHash(column)]);
+        IDeterminedHash indexesHash = new DeterminedHash([new IndexHash(index)]);
+
+        TableHash expected = new TableHash(name, [column], [index]);
+        TableHash actual = new TableHash(name, columnsHash, indexesHash);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromAllHashes()
+    {
+        IColumn column = new Column(new String("Col1"), new IntColumnType());
+        IIndex index = new Index(new True(), [column]);
+
+        IDeterminedHash nameHash = new DeterminedHash(new String("Table1"));
+        IDeterminedHash columnsHash = new DeterminedHash([new ColumnHash(column)]);
+        IDeterminedHash indexesHash = new DeterminedHash([new IndexHash(index)]);
+
+        TableHash expected = new TableHash(new String("Table1"), [column], [index]);
+        TableHash actual = new TableHash(nameHash, columnsHash, indexesHash);
+
+        Assert.True(expected.SequenceEqual(actual));
     }
 
     [Fact]
