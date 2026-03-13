@@ -1,6 +1,9 @@
 using System.Collections;
 using Pure.HashCodes;
 using Pure.HashCodes.Abstractions;
+using Pure.Primitives.Abstractions.String;
+using Pure.RelationalSchema.Abstractions.Column;
+using Pure.RelationalSchema.Abstractions.Index;
 using Pure.RelationalSchema.Abstractions.Table;
 
 namespace Pure.RelationalSchema.HashCodes;
@@ -27,28 +30,88 @@ public sealed record TableHash : IDeterminedHash
         5,
     ];
 
-    private readonly ITable _table;
+    private readonly IDeterminedHash _nameHash;
+    private readonly IDeterminedHash _columnsHash;
+    private readonly IDeterminedHash _indexesHash;
 
-    public TableHash(ITable table)
+    public TableHash(ITable table) :
+        this(
+            table.Name,
+            table.Columns,
+            table.Indexes
+            )
+    { }
+
+    public TableHash(IString name, IEnumerable<IColumn> columns, IEnumerable<IIndex> indexes)
+        : this(
+            new DeterminedHash(name),
+            columns,
+            indexes
+        )
+    { }
+
+    public TableHash(IDeterminedHash nameHash, IEnumerable<IColumn> columns, IEnumerable<IIndex> indexes)
+        : this(
+            nameHash,
+            new DeterminedHash(columns.Select(c => new ColumnHash(c))),
+            indexes
+        )
+    { }
+
+    public TableHash(IString name, IDeterminedHash columnsHash, IEnumerable<IIndex> indexes)
+        : this(
+            name,
+            columnsHash,
+            new DeterminedHash(indexes.Select(i => new IndexHash(i)))
+        )
+    { }
+
+    public TableHash(IString name, IEnumerable<IColumn> columns, IDeterminedHash indexesHash)
+        : this(
+            new DeterminedHash(name),
+            columns,
+            indexesHash
+        )
+    { }
+
+    public TableHash(IDeterminedHash nameHash, IDeterminedHash columnsHash, IEnumerable<IIndex> indexes)
+        : this(
+            nameHash,
+            columnsHash,
+            new DeterminedHash(indexes.Select(i => new IndexHash(i)))
+        )
+    { }
+
+    public TableHash(IDeterminedHash nameHash, IEnumerable<IColumn> columns, IDeterminedHash indexesHash)
+        : this(
+            nameHash,
+            new DeterminedHash(columns.Select(c => new ColumnHash(c))),
+            indexesHash
+        )
+    { }
+
+    public TableHash(IString name, IDeterminedHash columnsHash, IDeterminedHash indexesHash)
+        : this(
+            new DeterminedHash(name),
+            columnsHash,
+            indexesHash
+        )
+    { }
+
+    public TableHash(IDeterminedHash nameHash, IDeterminedHash columnsHash, IDeterminedHash indexesHash)
     {
-        _table = table;
+        _nameHash = nameHash;
+        _columnsHash = columnsHash;
+        _indexesHash = indexesHash;
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
         return new DeterminedHash(
             TypePrefix
-                .Concat(new DeterminedHash(_table.Name))
-                .Concat(
-                    new DeterminedHash(
-                        _table.Columns.Select(column => new ColumnHash(column))
-                    )
-                )
-                .Concat(
-                    new DeterminedHash(
-                        _table.Indexes.Select(index => new IndexHash(index))
-                    )
-                )
+                .Concat(_nameHash)
+                .Concat(_columnsHash)
+                .Concat(_indexesHash)
         ).GetEnumerator();
     }
 

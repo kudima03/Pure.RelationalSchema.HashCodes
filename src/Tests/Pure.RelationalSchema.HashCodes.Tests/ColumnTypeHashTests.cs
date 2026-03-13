@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Security.Cryptography;
 using Pure.HashCodes;
+using Pure.HashCodes.Abstractions;
 using Pure.RelationalSchema.Abstractions.ColumnType;
 using Pure.RelationalSchema.Random;
 
@@ -65,6 +66,30 @@ public sealed record ColumnTypeHashTests
         );
 
         Assert.Equal(expectedHash, new ColumnTypeHash(columnType));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromName()
+    {
+        IColumnType columnType = new RandomColumnType();
+
+        Assert.Equal(
+            new ColumnTypeHash(columnType),
+            new ColumnTypeHash(columnType.Name)
+        );
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameHash()
+    {
+        IColumnType columnType = new RandomColumnType();
+
+        IDeterminedHash nameHash = new DeterminedHash(columnType.Name);
+
+        Assert.Equal(
+            new ColumnTypeHash(columnType),
+            new ColumnTypeHash(nameHash)
+        );
     }
 
     [Fact]

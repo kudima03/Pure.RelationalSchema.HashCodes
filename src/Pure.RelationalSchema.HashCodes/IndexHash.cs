@@ -1,6 +1,8 @@
 using System.Collections;
 using Pure.HashCodes;
 using Pure.HashCodes.Abstractions;
+using Pure.Primitives.Abstractions.Bool;
+using Pure.RelationalSchema.Abstractions.Column;
 using Pure.RelationalSchema.Abstractions.Index;
 
 namespace Pure.RelationalSchema.HashCodes;
@@ -27,23 +29,48 @@ public sealed record IndexHash : IDeterminedHash
         244,
     ];
 
-    private readonly IIndex _index;
+    private readonly IDeterminedHash _isUniqueHash;
+    private readonly IDeterminedHash _columnsHash;
 
-    public IndexHash(IIndex index)
+    public IndexHash(IIndex index) :
+        this(
+            index.IsUnique,
+            index.Columns
+        )
+    { }
+
+    public IndexHash(IBool isUnique, IEnumerable<IColumn> columns)
+        : this(
+            new DeterminedHash(isUnique),
+            columns
+        )
+    { }
+
+    public IndexHash(IDeterminedHash isUniqueHash, IEnumerable<IColumn> columns)
+        : this(
+            isUniqueHash,
+            new DeterminedHash(columns.Select(c => new ColumnHash(c)))
+        )
+    { }
+
+    public IndexHash(IBool isUnique, IDeterminedHash columnsHash)
+        : this(
+              new DeterminedHash(isUnique),
+              columnsHash)
+    { }
+
+    public IndexHash(IDeterminedHash isUniqueHash, IDeterminedHash columnsHash)
     {
-        _index = index;
+        _isUniqueHash = isUniqueHash;
+        _columnsHash = columnsHash;
     }
 
     public IEnumerator<byte> GetEnumerator()
     {
         return new DeterminedHash(
             TypePrefix
-                .Concat(new DeterminedHash(_index.IsUnique))
-                .Concat(
-                    new DeterminedHash(
-                        _index.Columns.Select(column => new ColumnHash(column))
-                    )
-                )
+                .Concat(_isUniqueHash)
+                .Concat(_columnsHash)
         ).GetEnumerator();
     }
 
