@@ -102,55 +102,366 @@ public sealed record ForeignKeyHashTests
     }
 
     [Fact]
-    public void AllConstructorsProduceSameHash()
+    public void ProducesCorrectHashWithTablesAndColumns()
     {
         IForeignKey fk = new RandomForeignKey();
 
         ITable referencingTable = fk.ReferencingTable;
         ITable referencedTable = fk.ReferencedTable;
-
         IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
         IEnumerable<IColumn> referencedColumns = fk.ReferencedColumns;
 
-        IDeterminedHash referencingTableHash = new TableHash(referencingTable);
-        IDeterminedHash referencedTableHash = new TableHash(referencedTable);
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
 
-        IDeterminedHash referencingColumnsHash =
-            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c)));
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTable,
+            referencingColumns,
+            referencedTable,
+            referencedColumns
+        );
 
-        IDeterminedHash referencedColumnsHash =
-            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)));
+        Assert.True(expected.SequenceEqual(actual));
+    }
 
-        byte[] expected = new ForeignKeyHash(fk).ToArray();
+    [Fact]
+    public void ProducesCorrectHashWithTableHashAndColumns()
+    {
+        IForeignKey fk = new RandomForeignKey();
 
-        IEnumerable<byte[]> hashes =
-        [
-            new ForeignKeyHash(referencingTable, referencingColumns, referencedTable, referencedColumns).ToArray(),
-        new ForeignKeyHash(referencingTableHash, referencingColumns, referencedTable, referencedColumns).ToArray(),
-        new ForeignKeyHash(referencingTable, referencingColumnsHash, referencedTable, referencedColumns).ToArray(),
-        new ForeignKeyHash(referencingTable, referencingColumns, referencedTableHash, referencedColumns).ToArray(),
-        new ForeignKeyHash(referencingTable, referencingColumns, referencedTable, referencedColumnsHash).ToArray(),
+        TableHash referencingTableHash = new TableHash(fk.ReferencingTable);
+        ITable referencedTable = fk.ReferencedTable;
+        IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
+        IEnumerable<IColumn> referencedColumns = fk.ReferencedColumns;
 
-        new ForeignKeyHash(referencingTableHash, referencingColumnsHash, referencedTable, referencedColumns).ToArray(),
-        new ForeignKeyHash(referencingTableHash, referencingColumns, referencedTableHash, referencedColumns).ToArray(),
-        new ForeignKeyHash(referencingTableHash, referencingColumns, referencedTable, referencedColumnsHash).ToArray(),
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTableHash,
+            referencingColumns,
+            referencedTable,
+            referencedColumns
+        );
 
-        new ForeignKeyHash(referencingTable, referencingColumnsHash, referencedTableHash, referencedColumns).ToArray(),
-        new ForeignKeyHash(referencingTable, referencingColumnsHash, referencedTable, referencedColumnsHash).ToArray(),
-        new ForeignKeyHash(referencingTable, referencingColumns, referencedTableHash, referencedColumnsHash).ToArray(),
+        Assert.True(expected.SequenceEqual(actual));
+    }
 
-        new ForeignKeyHash(referencingTableHash, referencingColumnsHash, referencedTableHash, referencedColumns).ToArray(),
-        new ForeignKeyHash(referencingTableHash, referencingColumnsHash, referencedTable, referencedColumnsHash).ToArray(),
-        new ForeignKeyHash(referencingTableHash, referencingColumns, referencedTableHash, referencedColumnsHash).ToArray(),
-        new ForeignKeyHash(referencingTable, referencingColumnsHash, referencedTableHash, referencedColumnsHash).ToArray(),
+    [Fact]
+    public void ProducesCorrectHashWithTableAndColumnsHash()
+    {
+        IForeignKey fk = new RandomForeignKey();
 
-        new ForeignKeyHash(referencingTableHash, referencingColumnsHash, referencedTableHash, referencedColumnsHash).ToArray(),
-    ];
+        ITable referencingTable = fk.ReferencingTable;
+        DeterminedHash referencingColumnsHash = new DeterminedHash(fk.ReferencingColumns.Select(c => new ColumnHash(c)));
+        ITable referencedTable = fk.ReferencedTable;
+        IEnumerable<IColumn> referencedColumns = fk.ReferencedColumns;
 
-        foreach (byte[] hash in hashes)
-        {
-            Assert.Equal(expected, hash);
-        }
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTable,
+            referencingColumnsHash,
+            referencedTable,
+            referencedColumns
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashWithTableAndReferencedTableHash()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        ITable referencingTable = fk.ReferencingTable;
+        IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
+        TableHash referencedTableHash = new TableHash(fk.ReferencedTable);
+        IEnumerable<IColumn> referencedColumns = fk.ReferencedColumns;
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTable,
+            referencingColumns,
+            referencedTableHash,
+            referencedColumns
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashWithReferencedColumnsHash()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        ITable referencingTable = fk.ReferencingTable;
+        IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
+        ITable referencedTable = fk.ReferencedTable;
+        DeterminedHash referencedColumnsHash = new DeterminedHash(fk.ReferencedColumns.Select(c => new ColumnHash(c)));
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTable,
+            referencingColumns,
+            referencedTable,
+            referencedColumnsHash
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashWithTableHashAndReferencedColumnsHashProduces()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        TableHash referencingTableHash = new TableHash(fk.ReferencingTable);
+        IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
+        ITable referencedTable = fk.ReferencedTable;
+        DeterminedHash referencedColumnsHash = new DeterminedHash(fk.ReferencedColumns.Select(c => new ColumnHash(c)));
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTableHash,
+            referencingColumns,
+            referencedTable,
+            referencedColumnsHash
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashWithTableAndColumnsHashAndReferencedTable()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        IDeterminedHash referencingTableHash = new TableHash(fk.ReferencingTable);
+        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+            fk.ReferencingColumns.Select(c => new ColumnHash(c))
+        );
+        ITable referencedTable = fk.ReferencedTable;
+        IEnumerable<IColumn> referencedColumns = fk.ReferencedColumns;
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTableHash,
+            referencingColumnsHash,
+            referencedTable,
+            referencedColumns
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashWithTableAndColumnsHashAndReferencedColumnsHash()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        ITable referencingTable = fk.ReferencingTable;
+        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+            fk.ReferencingColumns.Select(c => new ColumnHash(c))
+        );
+        ITable referencedTable = fk.ReferencedTable;
+        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+            fk.ReferencedColumns.Select(c => new ColumnHash(c))
+        );
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTable,
+            referencingColumnsHash,
+            referencedTable,
+            referencedColumnsHash
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashReferencingTableHashAndReferencedTableHash()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        IDeterminedHash referencingTableHash = new TableHash(fk.ReferencingTable);
+        IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
+        IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
+        IEnumerable<IColumn> referencedColumns = fk.ReferencedColumns;
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTableHash,
+            referencingColumns,
+            referencedTableHash,
+            referencedColumns
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashTableAndColumnsHashAndReferencedTableHash()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        ITable referencingTable = fk.ReferencingTable;
+        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+            fk.ReferencingColumns.Select(c => new ColumnHash(c))
+        );
+        IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
+        IEnumerable<IColumn> referencedColumns = fk.ReferencedColumns;
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTable,
+            referencingColumnsHash,
+            referencedTableHash,
+            referencedColumns
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashTableAndColumnsHashAndReferencedHashes()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        ITable referencingTable = fk.ReferencingTable;
+        IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
+        IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
+        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+            fk.ReferencedColumns.Select(c => new ColumnHash(c))
+        );
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTable,
+            referencingColumns,
+            referencedTableHash,
+            referencedColumnsHash
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashWithReferencingHashesAndReferencedColumns()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        IDeterminedHash referencingTableHash = new TableHash(fk.ReferencingTable);
+        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+            fk.ReferencingColumns.Select(c => new ColumnHash(c))
+        );
+        IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
+        IEnumerable<IColumn> referencedColumns = fk.ReferencedColumns;
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTableHash,
+            referencingColumnsHash,
+            referencedTableHash,
+            referencedColumns
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashWithReferencingHashesAndReferencedTableAndColumnsHash()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        IDeterminedHash referencingTableHash = new TableHash(fk.ReferencingTable);
+        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+            fk.ReferencingColumns.Select(c => new ColumnHash(c))
+        );
+        ITable referencedTable = fk.ReferencedTable;
+        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+            fk.ReferencedColumns.Select(c => new ColumnHash(c))
+        );
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTableHash,
+            referencingColumnsHash,
+            referencedTable,
+            referencedColumnsHash
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashWithReferencingTableHashAndColumnsAndReferencedHashes()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        IDeterminedHash referencingTableHash = new TableHash(fk.ReferencingTable);
+        IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
+        IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
+        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+            fk.ReferencedColumns.Select(c => new ColumnHash(c))
+        );
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTableHash,
+            referencingColumns,
+            referencedTableHash,
+            referencedColumnsHash
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashWithTableAndColumnsHashAndReferencedTableHashAndColumnsHash()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        ITable referencingTable = fk.ReferencingTable;
+        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+            fk.ReferencingColumns.Select(c => new ColumnHash(c))
+        );
+        IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
+        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+            fk.ReferencedColumns.Select(c => new ColumnHash(c))
+        );
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTable,
+            referencingColumnsHash,
+            referencedTableHash,
+            referencedColumnsHash
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProducesCorrectHashWithAllHashes()
+    {
+        IForeignKey fk = new RandomForeignKey();
+
+        IDeterminedHash referencingTableHash = new TableHash(fk.ReferencingTable);
+        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+            fk.ReferencingColumns.Select(c => new ColumnHash(c))
+        );
+        IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
+        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+            fk.ReferencedColumns.Select(c => new ColumnHash(c))
+        );
+
+        ForeignKeyHash expected = new ForeignKeyHash(fk);
+        ForeignKeyHash actual = new ForeignKeyHash(
+            referencingTableHash,
+            referencingColumnsHash,
+            referencedTableHash,
+            referencedColumnsHash
+        );
+
+        Assert.True(expected.SequenceEqual(actual));
     }
 
     [Fact]
