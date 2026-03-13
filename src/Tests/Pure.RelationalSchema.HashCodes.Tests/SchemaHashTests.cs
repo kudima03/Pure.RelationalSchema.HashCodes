@@ -135,38 +135,213 @@ public sealed record SchemaHashTests
     }
 
     [Fact]
-    public void AllConstructorsProduceSameHash()
+    public void ProduceCorrectHashFromNameAndTablesAndForeignKeys()
     {
-        ISchema schema = new RandomSchema();
+        ITable table = new Table(
+            new String("Table1"),
+            [new Column(new String("Col1"), new IntColumnType())],
+            []
+        );
 
-        IString name = schema.Name;
-        IEnumerable<ITable> tables = schema.Tables;
-        IEnumerable<IForeignKey> foreignKeys = schema.ForeignKeys;
+        IForeignKey fk = new ForeignKey(
+            table,
+            table.Columns,
+            table,
+            table.Columns
+        );
 
-        IDeterminedHash nameHash = new DeterminedHash(name);
-        IDeterminedHash tablesHash =
-            new DeterminedHash(tables.Select(t => new TableHash(t)));
-        IDeterminedHash foreignKeysHash =
-            new DeterminedHash(foreignKeys.Select(fk => new ForeignKeyHash(fk)));
+        IString name = new String("Schema1");
+        IEnumerable<ITable> tables = [table];
+        IEnumerable<IForeignKey> foreignKeys = [fk];
 
-        byte[] expected = new SchemaHash(schema).ToArray();
+        SchemaHash expected = new SchemaHash(name, tables, foreignKeys);
+        SchemaHash actual = new SchemaHash(name, tables, foreignKeys);
 
-        IEnumerable<byte[]> hashes =
-        [
-            new SchemaHash(name, tables, foreignKeys).ToArray(),
-        new SchemaHash(nameHash, tables, foreignKeys).ToArray(),
-        new SchemaHash(name, tablesHash, foreignKeys).ToArray(),
-        new SchemaHash(name, tables, foreignKeysHash).ToArray(),
-        new SchemaHash(nameHash, tablesHash, foreignKeys).ToArray(),
-        new SchemaHash(nameHash, tables, foreignKeysHash).ToArray(),
-        new SchemaHash(name, tablesHash, foreignKeysHash).ToArray(),
-        new SchemaHash(nameHash, tablesHash, foreignKeysHash).ToArray(),
-    ];
+        Assert.True(expected.SequenceEqual(actual));
+    }
 
-        foreach (byte[] hash in hashes)
-        {
-            Assert.Equal(expected, hash);
-        }
+    [Fact]
+    public void ProduceCorrectHashFromNameHashAndTablesAndForeignKeys()
+    {
+        ITable table = new Table(
+            new String("Table1"),
+            [new Column(new String("Col1"), new IntColumnType())],
+            []
+        );
+
+        IForeignKey fk = new ForeignKey(
+            table,
+            table.Columns,
+            table,
+            table.Columns
+        );
+
+        IDeterminedHash nameHash = new DeterminedHash(new String("Schema1"));
+        IEnumerable<ITable> tables = [table];
+        IEnumerable<IForeignKey> foreignKeys = [fk];
+
+        SchemaHash expected = new SchemaHash(new String("Schema1"), tables, foreignKeys);
+        SchemaHash actual = new SchemaHash(nameHash, tables, foreignKeys);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameAndTablesHashAndForeignKeys()
+    {
+        ITable table = new Table(
+            new String("Table1"),
+            [new Column(new String("Col1"), new IntColumnType())],
+            []
+        );
+
+        IForeignKey fk = new ForeignKey(
+            table,
+            table.Columns,
+            table,
+            table.Columns
+        );
+
+        IString name = new String("Schema1");
+        IEnumerable<ITable> tables = [table];
+        IDeterminedHash tablesHash = new DeterminedHash([new TableHash(table)]);
+        IEnumerable<IForeignKey> foreignKeys = [fk];
+
+        SchemaHash expected = new SchemaHash(name, tables, foreignKeys);
+        SchemaHash actual = new SchemaHash(name, tablesHash, foreignKeys);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameAndTablesAndForeignKeysHash()
+    {
+        ITable table = new Table(
+            new String("Table1"),
+            [new Column(new String("Col1"), new IntColumnType())],
+            []
+        );
+
+        IForeignKey fk = new ForeignKey(
+            table,
+            table.Columns,
+            table,
+            table.Columns
+        );
+
+        IString name = new String("Schema1");
+        IEnumerable<ITable> tables = [table];
+        IDeterminedHash foreignKeysHash = new DeterminedHash([new ForeignKeyHash(fk)]);
+        IEnumerable<IForeignKey> foreignKeys = [fk];
+
+        SchemaHash expected = new SchemaHash(name, tables, foreignKeys);
+        SchemaHash actual = new SchemaHash(name, tables, foreignKeysHash);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameHashTablesHashAndForeignKeys()
+    {
+        ITable table = new Table(
+            new String("Table1"),
+            [new Column(new String("Col1"), new IntColumnType())],
+            []
+        );
+
+        IForeignKey fk = new ForeignKey(
+            table,
+            table.Columns,
+            table,
+            table.Columns
+        );
+
+        IDeterminedHash nameHash = new DeterminedHash(new String("Schema1"));
+        IDeterminedHash tablesHash = new DeterminedHash([new TableHash(table)]);
+        IEnumerable<IForeignKey> foreignKeys = [fk];
+
+        SchemaHash expected = new SchemaHash(new String("Schema1"), [table], foreignKeys);
+        SchemaHash actual = new SchemaHash(nameHash, tablesHash, foreignKeys);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameHashTablesAndForeignKeysHash()
+    {
+        ITable table = new Table(
+            new String("Table1"),
+            [new Column(new String("Col1"), new IntColumnType())],
+            []
+        );
+
+        IForeignKey fk = new ForeignKey(
+            table,
+            table.Columns,
+            table,
+            table.Columns
+        );
+
+        IDeterminedHash nameHash = new DeterminedHash(new String("Schema1"));
+        IEnumerable<ITable> tables = [table];
+        IDeterminedHash foreignKeysHash = new DeterminedHash([new ForeignKeyHash(fk)]);
+
+        SchemaHash expected = new SchemaHash(new String("Schema1"), tables, [fk]);
+        SchemaHash actual = new SchemaHash(nameHash, tables, foreignKeysHash);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromNameTablesHashAndForeignKeysHash()
+    {
+        ITable table = new Table(
+            new String("Table1"),
+            [new Column(new String("Col1"), new IntColumnType())],
+            []
+        );
+
+        IForeignKey fk = new ForeignKey(
+            table,
+            table.Columns,
+            table,
+            table.Columns
+        );
+
+        IString name = new String("Schema1");
+        IDeterminedHash tablesHash = new DeterminedHash([new TableHash(table)]);
+        IDeterminedHash foreignKeysHash = new DeterminedHash([new ForeignKeyHash(fk)]);
+
+        SchemaHash expected = new SchemaHash(name, [table], [fk]);
+        SchemaHash actual = new SchemaHash(name, tablesHash, foreignKeysHash);
+
+        Assert.True(expected.SequenceEqual(actual));
+    }
+
+    [Fact]
+    public void ProduceCorrectHashFromAllHashes()
+    {
+        ITable table = new Table(
+            new String("Table1"),
+            [new Column(new String("Col1"), new IntColumnType())],
+            []
+        );
+
+        IForeignKey fk = new ForeignKey(
+            table,
+            table.Columns,
+            table,
+            table.Columns
+        );
+
+        IDeterminedHash nameHash = new DeterminedHash(new String("Schema1"));
+        IDeterminedHash tablesHash = new DeterminedHash([new TableHash(table)]);
+        IDeterminedHash foreignKeysHash = new DeterminedHash([new ForeignKeyHash(fk)]);
+
+        SchemaHash expected = new SchemaHash(new String("Schema1"), [table], [fk]);
+        SchemaHash actual = new SchemaHash(nameHash, tablesHash, foreignKeysHash);
+
+        Assert.True(expected.SequenceEqual(actual));
     }
 
     [Fact]
