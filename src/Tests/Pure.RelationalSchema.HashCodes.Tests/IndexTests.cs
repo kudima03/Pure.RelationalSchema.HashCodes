@@ -112,12 +112,10 @@ public sealed record IndexTests
         IBool isUnique = index.IsUnique;
         IEnumerable<IColumn> columns = index.Columns;
 
-        byte[] expected = new IndexHash(index).ToArray();
+        IndexHash expected = new IndexHash(index);
+        IndexHash actual = new IndexHash(isUnique, columns);
 
-        byte[] actual =
-            new IndexHash(isUnique, columns).ToArray();
-
-        Assert.Equal(expected, actual);
+        Assert.True(expected.SequenceEqual(actual));
     }
 
     [Fact]
@@ -130,12 +128,10 @@ public sealed record IndexTests
 
         IDeterminedHash isUniqueHash = new DeterminedHash(isUnique);
 
-        byte[] expected = new IndexHash(index).ToArray();
+        IndexHash expected = new IndexHash(index);
+        IndexHash actual = new IndexHash(isUniqueHash, columns);
 
-        byte[] actual =
-            new IndexHash(isUniqueHash, columns).ToArray();
-
-        Assert.Equal(expected, actual);
+        Assert.True(expected.SequenceEqual(actual));
     }
 
     [Fact]
@@ -146,15 +142,12 @@ public sealed record IndexTests
         IBool isUnique = index.IsUnique;
         IEnumerable<IColumn> columns = index.Columns;
 
-        IDeterminedHash columnsHash =
-            new DeterminedHash(columns.Select(c => new ColumnHash(c)));
+        IDeterminedHash columnsHash = new DeterminedHash(columns.Select(c => new ColumnHash(c)));
 
-        byte[] expected = new IndexHash(index).ToArray();
+        IndexHash expected = new IndexHash(index);
+        IndexHash actual = new IndexHash(isUnique, columnsHash);
 
-        byte[] actual =
-            new IndexHash(isUnique, columnsHash).ToArray();
-
-        Assert.Equal(expected, actual);
+        Assert.True(expected.SequenceEqual(actual));
     }
 
     [Fact]
@@ -166,15 +159,12 @@ public sealed record IndexTests
         IEnumerable<IColumn> columns = index.Columns;
 
         IDeterminedHash isUniqueHash = new DeterminedHash(isUnique);
-        IDeterminedHash columnsHash =
-            new DeterminedHash(columns.Select(c => new ColumnHash(c)));
+        IDeterminedHash columnsHash = new DeterminedHash(columns.Select(c => new ColumnHash(c)));
 
-        byte[] expected = new IndexHash(index).ToArray();
+        IndexHash expected = new IndexHash(index);
+        IndexHash actual = new IndexHash(isUniqueHash, columnsHash);
 
-        byte[] actual =
-            new IndexHash(isUniqueHash, columnsHash).ToArray();
-
-        Assert.Equal(expected, actual);
+        Assert.True(expected.SequenceEqual(actual));
     }
 
     [Fact]
