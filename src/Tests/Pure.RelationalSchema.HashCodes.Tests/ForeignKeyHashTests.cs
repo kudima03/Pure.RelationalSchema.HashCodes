@@ -208,7 +208,7 @@ public sealed record ForeignKeyHashTests
     }
 
     [Fact]
-    public void ProducesCorrectHashWithTableHashAndReferencedColumnsHashProduces()
+    public void ProducesCorrectHashWithTableHashAndReferencedColumnsHash()
     {
         IForeignKey fk = new RandomForeignKey();
 
