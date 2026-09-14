@@ -12,7 +12,7 @@ dotnet build --no-restore -warnaserror /p:RunAnalyzers=true
 dotnet format --verify-no-changes             # check code style (CI enforces this)
 dotnet format                                  # auto-fix code style
 dotnet test --no-build --verbosity normal --logger trx --collect:"XPlat Code Coverage"
-dotnet pack --configuration Release -p:PackageVersion=<version> --output .
+dotnet pack --configuration Release -p:Version=<version> --output .
 ```
 
 ## Architecture
