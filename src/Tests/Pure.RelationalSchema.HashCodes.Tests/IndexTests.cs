@@ -47,7 +47,7 @@ public sealed record IndexTests
                 [
                     .. _typePrefix,
                     .. new DeterminedHash(randomIndex.IsUnique),
-                    .. new DeterminedHash(
+                    .. new SequenceHash(
                         randomIndex.Columns.Select(x => new ColumnHash(x))
                     ),
                 ]
@@ -81,7 +81,7 @@ public sealed record IndexTests
             [
                 .. _typePrefix,
                 .. new DeterminedHash(randomIndex.IsUnique),
-                .. new DeterminedHash(randomIndex.Columns.Select(x => new ColumnHash(x))),
+                .. new SequenceHash(randomIndex.Columns.Select(x => new ColumnHash(x))),
             ]
         );
 
@@ -89,18 +89,17 @@ public sealed record IndexTests
     }
 
     [Fact]
-    public void ColumnsOrderNotMatter()
+    public void ColumnsOrderMatters()
     {
-        IIndex randomIndex = new RandomIndex();
+        IReadOnlyCollection<IColumn> columns =
+        [
+            new Column(new String("first"), new IntColumnType()),
+            new Column(new String("second"), new IntColumnType()),
+        ];
 
-        IIndex indexWithReversedColumns = new Index(
-            randomIndex.IsUnique,
-            randomIndex.Columns.Reverse()
-        );
-
-        Assert.Equal(
-            new IndexHash(randomIndex).AsEnumerable(),
-            new IndexHash(indexWithReversedColumns).AsEnumerable()
+        Assert.NotEqual(
+            new IndexHash(new Index(new False(), columns)).AsEnumerable(),
+            new IndexHash(new Index(new False(), columns.Reverse())).AsEnumerable()
         );
     }
 
@@ -142,7 +141,7 @@ public sealed record IndexTests
         IBool isUnique = index.IsUnique;
         IEnumerable<IColumn> columns = index.Columns;
 
-        IDeterminedHash columnsHash = new DeterminedHash(columns.Select(c => new ColumnHash(c)));
+        IDeterminedHash columnsHash = new SequenceHash(columns.Select(c => new ColumnHash(c)));
 
         IndexHash expected = new IndexHash(index);
         IndexHash actual = new IndexHash(isUnique, columnsHash);
@@ -159,7 +158,7 @@ public sealed record IndexTests
         IEnumerable<IColumn> columns = index.Columns;
 
         IDeterminedHash isUniqueHash = new DeterminedHash(isUnique);
-        IDeterminedHash columnsHash = new DeterminedHash(columns.Select(c => new ColumnHash(c)));
+        IDeterminedHash columnsHash = new SequenceHash(columns.Select(c => new ColumnHash(c)));
 
         IndexHash expected = new IndexHash(index);
         IndexHash actual = new IndexHash(isUniqueHash, columnsHash);
@@ -182,7 +181,7 @@ public sealed record IndexTests
         ];
 
         Assert.Equal(
-            "975E8091A716FB7C61915C355449EDD67E98863259CC592D892F9639051C557E",
+            "EF62E808735752E1B7B3066537E058EEAB8F73B6B783CD552D261FF7AF41AAC5",
             Convert.ToHexString(new IndexHash(new Index(uniqueness, columns)).ToArray())
         );
     }

@@ -165,7 +165,7 @@ public sealed record TableHashTests
         ];
 
         Assert.Equal(
-            "BEF6FF6D2D6180367A589DDF981080F3EAC06FBE2221321CAAEDDEF87B401245",
+            "31400445613054637D80F6F4437CE4C0EB66374B2288A49D1E337BC08AC96929",
             Convert.ToHexString(
                 new TableHash(new Table(name, columns.Reverse(), indexes)).ToArray()
             )
@@ -193,7 +193,7 @@ public sealed record TableHashTests
         ];
 
         Assert.Equal(
-            "BEF6FF6D2D6180367A589DDF981080F3EAC06FBE2221321CAAEDDEF87B401245",
+            "31400445613054637D80F6F4437CE4C0EB66374B2288A49D1E337BC08AC96929",
             Convert.ToHexString(
                 new TableHash(new Table(name, columns, indexes.Reverse())).ToArray()
             )
@@ -349,7 +349,7 @@ public sealed record TableHashTests
         ];
 
         Assert.Equal(
-            "BEF6FF6D2D6180367A589DDF981080F3EAC06FBE2221321CAAEDDEF87B401245",
+            "31400445613054637D80F6F4437CE4C0EB66374B2288A49D1E337BC08AC96929",
             Convert.ToHexString(
                 new TableHash(new Table(name, columns, indexes)).ToArray()
             )

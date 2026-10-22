@@ -49,7 +49,7 @@ public sealed record IndexHash : IDeterminedHash
     public IndexHash(IDeterminedHash isUniqueHash, IEnumerable<IColumn> columns)
         : this(
             isUniqueHash,
-            new DeterminedHash(columns.Select(c => new ColumnHash(c)))
+            new SequenceHash(columns.Select(c => new ColumnHash(c)))
         )
     { }
 

@@ -63,7 +63,7 @@ public sealed record ForeignKeyHash : IDeterminedHash
         IEnumerable<IColumn> referencedColumns)
         : this(
             referencingTableHash,
-            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c))),
+            new SequenceHash(referencingColumns.Select(c => new ColumnHash(c))),
             referencedTable,
             referencedColumns
               )
@@ -91,7 +91,7 @@ public sealed record ForeignKeyHash : IDeterminedHash
             referencingTable,
             referencingColumns,
             referencedTableHash,
-            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)))
+            new SequenceHash(referencedColumns.Select(c => new ColumnHash(c)))
         )
     { }
 
@@ -115,7 +115,7 @@ public sealed record ForeignKeyHash : IDeterminedHash
     IDeterminedHash referencedColumnsHash)
     : this(
         referencingTableHash,
-        new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c))),
+        new SequenceHash(referencingColumns.Select(c => new ColumnHash(c))),
         referencedTable,
         referencedColumnsHash
     )
@@ -156,7 +156,7 @@ public sealed record ForeignKeyHash : IDeterminedHash
             referencingTableHash,
             referencingColumns,
             referencedTableHash,
-            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)))
+            new SequenceHash(referencedColumns.Select(c => new ColumnHash(c)))
         )
     { }
 
@@ -195,7 +195,7 @@ public sealed record ForeignKeyHash : IDeterminedHash
             referencingTableHash,
             referencingColumnsHash,
             referencedTableHash,
-            new DeterminedHash(referencedColumns.Select(c => new ColumnHash(c)))
+            new SequenceHash(referencedColumns.Select(c => new ColumnHash(c)))
         )
     { }
 
@@ -219,7 +219,7 @@ public sealed record ForeignKeyHash : IDeterminedHash
         IDeterminedHash referencedColumnsHash)
         : this(
             referencingTableHash,
-            new DeterminedHash(referencingColumns.Select(c => new ColumnHash(c))),
+            new SequenceHash(referencingColumns.Select(c => new ColumnHash(c))),
             referencedTableHash,
             referencedColumnsHash
         )

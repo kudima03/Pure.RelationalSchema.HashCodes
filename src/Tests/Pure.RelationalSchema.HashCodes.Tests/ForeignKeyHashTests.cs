@@ -50,11 +50,11 @@ public sealed record ForeignKeyHashTests
                 [
                     .. _typePrefix,
                     .. new TableHash(randomForeignKey.ReferencingTable),
-                    .. new DeterminedHash(
+                    .. new SequenceHash(
                         randomForeignKey.ReferencingColumns.Select(x => new ColumnHash(x))
                     ),
                     .. new TableHash(randomForeignKey.ReferencedTable),
-                    .. new DeterminedHash(
+                    .. new SequenceHash(
                         randomForeignKey.ReferencedColumns.Select(x => new ColumnHash(x))
                     ),
                 ]
@@ -88,11 +88,11 @@ public sealed record ForeignKeyHashTests
             [
                 .. _typePrefix,
                 .. new TableHash(randomForeignKey.ReferencingTable),
-                .. new DeterminedHash(
+                .. new SequenceHash(
                     randomForeignKey.ReferencingColumns.Select(x => new ColumnHash(x))
                 ),
                 .. new TableHash(randomForeignKey.ReferencedTable),
-                .. new DeterminedHash(
+                .. new SequenceHash(
                     randomForeignKey.ReferencedColumns.Select(x => new ColumnHash(x))
                 ),
             ]
@@ -150,7 +150,7 @@ public sealed record ForeignKeyHashTests
         IForeignKey fk = new RandomForeignKey();
 
         ITable referencingTable = fk.ReferencingTable;
-        DeterminedHash referencingColumnsHash = new DeterminedHash(fk.ReferencingColumns.Select(c => new ColumnHash(c)));
+        IDeterminedHash referencingColumnsHash = new SequenceHash(fk.ReferencingColumns.Select(c => new ColumnHash(c)));
         ITable referencedTable = fk.ReferencedTable;
         IEnumerable<IColumn> referencedColumns = fk.ReferencedColumns;
 
@@ -194,7 +194,7 @@ public sealed record ForeignKeyHashTests
         ITable referencingTable = fk.ReferencingTable;
         IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
         ITable referencedTable = fk.ReferencedTable;
-        DeterminedHash referencedColumnsHash = new DeterminedHash(fk.ReferencedColumns.Select(c => new ColumnHash(c)));
+        IDeterminedHash referencedColumnsHash = new SequenceHash(fk.ReferencedColumns.Select(c => new ColumnHash(c)));
 
         ForeignKeyHash expected = new ForeignKeyHash(fk);
         ForeignKeyHash actual = new ForeignKeyHash(
@@ -215,7 +215,7 @@ public sealed record ForeignKeyHashTests
         TableHash referencingTableHash = new TableHash(fk.ReferencingTable);
         IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
         ITable referencedTable = fk.ReferencedTable;
-        DeterminedHash referencedColumnsHash = new DeterminedHash(fk.ReferencedColumns.Select(c => new ColumnHash(c)));
+        IDeterminedHash referencedColumnsHash = new SequenceHash(fk.ReferencedColumns.Select(c => new ColumnHash(c)));
 
         ForeignKeyHash expected = new ForeignKeyHash(fk);
         ForeignKeyHash actual = new ForeignKeyHash(
@@ -234,7 +234,7 @@ public sealed record ForeignKeyHashTests
         IForeignKey fk = new RandomForeignKey();
 
         IDeterminedHash referencingTableHash = new TableHash(fk.ReferencingTable);
-        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+        IDeterminedHash referencingColumnsHash = new SequenceHash(
             fk.ReferencingColumns.Select(c => new ColumnHash(c))
         );
         ITable referencedTable = fk.ReferencedTable;
@@ -257,11 +257,11 @@ public sealed record ForeignKeyHashTests
         IForeignKey fk = new RandomForeignKey();
 
         ITable referencingTable = fk.ReferencingTable;
-        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+        IDeterminedHash referencingColumnsHash = new SequenceHash(
             fk.ReferencingColumns.Select(c => new ColumnHash(c))
         );
         ITable referencedTable = fk.ReferencedTable;
-        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+        IDeterminedHash referencedColumnsHash = new SequenceHash(
             fk.ReferencedColumns.Select(c => new ColumnHash(c))
         );
 
@@ -303,7 +303,7 @@ public sealed record ForeignKeyHashTests
         IForeignKey fk = new RandomForeignKey();
 
         ITable referencingTable = fk.ReferencingTable;
-        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+        IDeterminedHash referencingColumnsHash = new SequenceHash(
             fk.ReferencingColumns.Select(c => new ColumnHash(c))
         );
         IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
@@ -328,7 +328,7 @@ public sealed record ForeignKeyHashTests
         ITable referencingTable = fk.ReferencingTable;
         IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
         IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
-        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+        IDeterminedHash referencedColumnsHash = new SequenceHash(
             fk.ReferencedColumns.Select(c => new ColumnHash(c))
         );
 
@@ -349,7 +349,7 @@ public sealed record ForeignKeyHashTests
         IForeignKey fk = new RandomForeignKey();
 
         IDeterminedHash referencingTableHash = new TableHash(fk.ReferencingTable);
-        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+        IDeterminedHash referencingColumnsHash = new SequenceHash(
             fk.ReferencingColumns.Select(c => new ColumnHash(c))
         );
         IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
@@ -372,11 +372,11 @@ public sealed record ForeignKeyHashTests
         IForeignKey fk = new RandomForeignKey();
 
         IDeterminedHash referencingTableHash = new TableHash(fk.ReferencingTable);
-        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+        IDeterminedHash referencingColumnsHash = new SequenceHash(
             fk.ReferencingColumns.Select(c => new ColumnHash(c))
         );
         ITable referencedTable = fk.ReferencedTable;
-        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+        IDeterminedHash referencedColumnsHash = new SequenceHash(
             fk.ReferencedColumns.Select(c => new ColumnHash(c))
         );
 
@@ -399,7 +399,7 @@ public sealed record ForeignKeyHashTests
         IDeterminedHash referencingTableHash = new TableHash(fk.ReferencingTable);
         IEnumerable<IColumn> referencingColumns = fk.ReferencingColumns;
         IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
-        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+        IDeterminedHash referencedColumnsHash = new SequenceHash(
             fk.ReferencedColumns.Select(c => new ColumnHash(c))
         );
 
@@ -420,11 +420,11 @@ public sealed record ForeignKeyHashTests
         IForeignKey fk = new RandomForeignKey();
 
         ITable referencingTable = fk.ReferencingTable;
-        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+        IDeterminedHash referencingColumnsHash = new SequenceHash(
             fk.ReferencingColumns.Select(c => new ColumnHash(c))
         );
         IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
-        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+        IDeterminedHash referencedColumnsHash = new SequenceHash(
             fk.ReferencedColumns.Select(c => new ColumnHash(c))
         );
 
@@ -445,11 +445,11 @@ public sealed record ForeignKeyHashTests
         IForeignKey fk = new RandomForeignKey();
 
         IDeterminedHash referencingTableHash = new TableHash(fk.ReferencingTable);
-        IDeterminedHash referencingColumnsHash = new DeterminedHash(
+        IDeterminedHash referencingColumnsHash = new SequenceHash(
             fk.ReferencingColumns.Select(c => new ColumnHash(c))
         );
         IDeterminedHash referencedTableHash = new TableHash(fk.ReferencedTable);
-        IDeterminedHash referencedColumnsHash = new DeterminedHash(
+        IDeterminedHash referencedColumnsHash = new SequenceHash(
             fk.ReferencedColumns.Select(c => new ColumnHash(c))
         );
 
@@ -501,7 +501,7 @@ public sealed record ForeignKeyHashTests
         );
 
         Assert.Equal(
-            "92683CB2463C911400D18121CBFBE36AF89C4B67926228E308BF78BC1590438D",
+            "F54D204CACFBF76C5C4D56DC43CACB5FB79AAD92BA4381FA54B9D472328D141E",
             Convert.ToHexString(new ForeignKeyHash(foreignKey).ToArray())
         );
     }
@@ -543,8 +543,46 @@ public sealed record ForeignKeyHashTests
         );
 
         Assert.Equal(
-            "54216FBD7A1DA51D3DA696527ED790ADB3B0A229BBEEE7DCDC8652E40F459879",
+            "3AD6E2E0F1118790D2D26F65B7C688A5AF6B959E363BC149D5A227BB215E192A",
             Convert.ToHexString(new ForeignKeyHash(foreignKey).ToArray())
+        );
+    }
+
+    [Fact]
+    public void ColumnsPairingMatters()
+    {
+        IReadOnlyCollection<IColumn> referencingColumns =
+        [
+            new Column(new String("a"), new IntColumnType()),
+            new Column(new String("b"), new IntColumnType()),
+        ];
+
+        IReadOnlyCollection<IColumn> referencedColumns =
+        [
+            new Column(new String("x"), new IntColumnType()),
+            new Column(new String("y"), new IntColumnType()),
+        ];
+
+        ITable referencingTable = new Table(new String("referencing"), referencingColumns, []);
+        ITable referencedTable = new Table(new String("referenced"), referencedColumns, []);
+
+        Assert.NotEqual(
+            new ForeignKeyHash(
+                new ForeignKey(
+                    referencingTable,
+                    referencingColumns,
+                    referencedTable,
+                    referencedColumns
+                )
+            ).AsEnumerable(),
+            new ForeignKeyHash(
+                new ForeignKey(
+                    referencingTable,
+                    referencingColumns,
+                    referencedTable,
+                    referencedColumns.Reverse()
+                )
+            ).AsEnumerable()
         );
     }
 
