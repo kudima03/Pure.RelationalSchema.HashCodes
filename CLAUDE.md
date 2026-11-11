@@ -37,7 +37,7 @@ Each type prefixes a unique 16-byte constant before SHA-256 to prevent cross-typ
 
 `GetHashCode()` and `ToString()` throw `NotSupportedException` — use `IEnumerable<byte>` / `.SequenceEqual()` for comparisons.
 
-**Multi-targeting:** net7.0, net8.0, net9.0, net10.0. `IsAotCompatible = true`.
+**Multi-targeting:** net7.0, net8.0, net9.0, net10.0, net11.0. `IsAotCompatible = true`.
 
 **Package validation:** `EnablePackageValidation = true`, baseline version 3.3.0. Breaking API changes fail the build.
 
