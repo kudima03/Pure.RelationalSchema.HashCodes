@@ -6,6 +6,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [3.4.0] — 2026-11-11
+
+### Added
+
+- Added `net11.0` to the library target frameworks. All existing target
+  frameworks are kept, so this is non-breaking.
+
+### Changed
+
+- Updated `Pure.HashCodes` to 2.2.0 and `Pure.RelationalSchema.Abstractions`
+  to 1.3.0, the releases built for .NET 11.
+- The assembly version is now derived from the release tag.
+- NuGet trusted publishing is enabled and `README.md` is packed into the
+  package.
+
+---
+
 ## [3.3.0] — 2026-03-16
 
 ### Added
